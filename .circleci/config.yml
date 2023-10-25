@@ -18,7 +18,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Install dependencies
-          command: cd backend/laravel && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+          command:  CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
 
       - run: sudo apt update
       - run: sudo apt-get install rsync
@@ -29,12 +29,12 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            sed -i -e 's:/public/index.php:/index.php:g' backend/laravel/public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' backend/laravel/public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_byspolye:g' backend/laravel/.env.example && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_tibilon:g' backend/laravel/.env.example  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' backend/laravel/public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' backend/laravel/.env.example 
+            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_byspolye:g' env.example && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_tibilon:g' .env.example  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' .env.example 
 
       - run:
           name: rename .env.example file to .env 
           command: |
-            mv backend/laravel/.env.example backend/laravel/.env
+            mv .env.example .env
 
       - run:
           name: ssh login  
