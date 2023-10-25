@@ -1,0 +1,51 @@
+version: 2.1
+
+
+jobs:
+  
+  deploy-laravel-staging:
+    docker:
+        - image: cimg/php:8.1
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+          - "ca:1a:82:30:b6:07:92:c2:9e:25:cf:ac:0c:28:f9:dd"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: Install dependencies
+          command: cd backend/laravel && CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+
+      - run: sudo apt update
+      - run: sudo apt-get install rsync
+
+      # - run:
+      #     name: Update known hosts
+      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      - run:
+          name: find and replace in document
+          command: |
+            sed -i -e 's:/public/index.php:/index.php:g' backend/laravel/public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' backend/laravel/public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_byspolye:g' backend/laravel/.env.example && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_tibilon:g' backend/laravel/.env.example  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' backend/laravel/public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' backend/laravel/.env.example 
+
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            mv backend/laravel/.env.example backend/laravel/.env
+
+      - run:
+          name: ssh login  
+          command: |
+             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ skillz@185.160.67.60:hubeei/api
+            
+workflows:
+  version: 2
+  Byspoly_deploy:
+    jobs:
+      - deploy-laravel-staging: # Use the pre-configured job, deploy-via-git
+          filters:
+            branches:
+              only: staging
