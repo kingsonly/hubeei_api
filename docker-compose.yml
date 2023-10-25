@@ -1,0 +1,45 @@
+version: "3.2"
+
+services:
+    hubeeiservice:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - 3040:8000
+        volumes:
+            # Re-use local composer cache via host-volume
+            - ~/.composer-docker/cache:/root/.composer/cache:delegated
+            - .:/app
+        networks:
+            - hubeeinetwork
+
+    mysql:
+        image: mariadb:10.5.8
+        environment:
+            - MYSQL_ROOT_PASSWORD=Ubuxa##99
+            - MYSQL_DATABASE=forge
+            - MYSQL_USER=forge
+            - MYSQL_PASSWORD=Ubuxa##99
+        networks:
+            - hubeeinetwork
+
+    phpmyadmin:
+        image: phpmyadmin:latest
+        ports:
+            - 3041:80
+        environment:
+            - PMA_HOST=mysql
+            - PMA_PASSWORD=Ubuxa##99
+        restart: unless-stopped
+        volumes:
+            # Re-use local composer cache via host-volume
+            - ~/.composer-docker/cache:/root/.composer/cache:delegated
+            # Mount source-code for development
+            - ./:/app
+        networks:
+            - hubeeinetwork
+
+networks:
+    hubeeinetwork:
+        driver: bridge
