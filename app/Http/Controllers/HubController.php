@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Hub;
+use App\Models\Hubs;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -43,7 +43,7 @@ class HubController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => 'error', 'message' => "ensure that all required filed are properly filled "], 400);
         }
-        $model = new Hub();
+        $model = new Hubs();
         $model->name = $request->hubName;
         $model->description = $request->hubDescription;
         $model->url = $request->url;

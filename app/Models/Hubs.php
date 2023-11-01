@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Hub extends Model
+class Hubs extends Model
 {
+
     use HasFactory;
+
+    protected $table = 'hubs';
 }

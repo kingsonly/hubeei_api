@@ -11,7 +11,7 @@ class HubCategory extends Model
 
     public function hub()
     {
-        return $this->HasOne(Hub::class, "id", "hub_id");
+        return $this->HasOne(Hubs::class, "id", "hub_id");
     }
 
     public function content()
