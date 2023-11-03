@@ -34,10 +34,9 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_byspolye:g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_hubeei:g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' .env
+            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_hubeei:g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_tibilon:g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' .env
 
       
-
       - run:
           name: ssh login  
           command: |

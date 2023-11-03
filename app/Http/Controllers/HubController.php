@@ -17,17 +17,17 @@ class HubController extends Controller
      */
     public function index()
     {
-        $model = Hub::with(["user"])->get();
+        $model = Hubs::with(["user"])->get();
         return response()->json(["status" => "success", "data" => $model], 200);
     }
 
     public function getUsersHubs($id)
     {
-        $model = Hub::where(["user_id" => $id])->with(["user"])->get();
+        $model = Hubs::where(["user_id" => $id])->with(["user"])->get();
         return response()->json(["status" => "success", "data" => $model], 200);
     }
 
-    public function view(Hub $id)
+    public function view(Hubs $id)
     {
         return response()->json(["status" => "success", "data" => $id], 200);
     }
@@ -55,7 +55,7 @@ class HubController extends Controller
         return response()->json(["status" => "error"], 400);
     }
 
-    public function update(Request $request, Hub $id)
+    public function update(Request $request, Hubs $id)
     {
         $model = $id;
         if (!empty($request->hubName)) {
@@ -77,7 +77,7 @@ class HubController extends Controller
         return response()->json(["status" => "success", "message" => "You have not specified records to be updated"], 400);
     }
 
-    public function delete(Hub $id)
+    public function delete(Hubs $id)
     {
         if ($id->delete()) {
             return response()->json(["status" => "success"], 200);
