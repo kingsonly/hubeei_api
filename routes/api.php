@@ -17,4 +17,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [SiteController::class, 'register'])->name('register');
 Route::post('/login', [SiteController::class, 'login'])->name('login');
-Route::post('/usershub/{id}', [SiteController::class, 'getUsersHubs'])->name('users-hub');
+Route::get('/usershub/{id}', [SiteController::class, 'getUsersHubs'])->name('users-hub');
