@@ -53,7 +53,7 @@ class HubCategoryController extends Controller
                 $counter++;
             }
 
-            $getAllCategories = HubCategory::where(["hub_id" => $request->hub_id])->orderBy('position', 'asc')->get(); // order by possision
+            $getAllCategories = HubCategory::where(["hub_id" => $request->hub_id])->orderBy('position', 'asc')->with("content")->get(); // order by possision
             return response()->json(["status" => "success", "data" => $getAllCategories], 200);
         }
         return response()->json(["status" => "error"], 400);
