@@ -60,7 +60,8 @@ class HubCategoryController extends Controller
 
     public function view(HubCategory $id)
     {
-        $model = $id;
+        // get hub with content and category 
+        $model = $id->with("content")->get();
         if ($model) {
             return response()->json(["status" => "success", "data" => $model], 200);
         }
