@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HubCategory;
+use App\Models\Hubs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -60,8 +61,7 @@ class HubCategoryController extends Controller
 
     public function view(HubCategory $id)
     {
-        // get hub with content and category 
-        $model = $id->with("content")->get();
+        $model = $id;
         if ($model) {
             return response()->json(["status" => "success", "data" => $model], 200);
         }
@@ -100,5 +100,15 @@ class HubCategoryController extends Controller
         }
 
         return response()->json(["status" => "success", 'message' => 'Category order updated successfully']);
+    }
+
+    public function getCategoryWithContent($id)
+    {
+        // get hub with content and category 
+        $model = HubCategory::where(["hub_id" => $id])->with("content")->get();
+        if ($model) {
+            return response()->json(["status" => "success", "data" => $model], 200);
+        }
+        return response()->json(["status" => "error", "message" => "could not find a record"], 400);
     }
 }

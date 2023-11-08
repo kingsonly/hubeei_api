@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HubCategoryController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\HubController;
 use Illuminate\Http\Request;
@@ -19,3 +20,4 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [SiteController::class, 'register'])->name('register');
 Route::post('/login', [SiteController::class, 'login'])->name('login');
 Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('users-hub');
+Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
