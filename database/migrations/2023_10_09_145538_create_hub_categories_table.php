@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("name");
             $table->integer("hub_id");
             $table->integer("position")->nullable()->comment("all category should be ordered by possition");
-            $table->integer("status");
+            $table->integer("status")->default(0);
             $table->timestamps();
         });
     }

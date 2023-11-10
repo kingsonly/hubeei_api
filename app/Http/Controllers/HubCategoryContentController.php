@@ -72,7 +72,7 @@ class HubCategoryContentController extends Controller
 
     public function uploadOtherFiles(Request $request)
     {
-        if ($request->content_type == "video" or $request->content_type == "mp3" or $request->content_type == "pdf") {
+        if ($request->content_type == "video" or $request->content_type == "audio" or $request->content_type == "pdf") {
             $file = $request->file('content');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             if ($file->move(public_path('images/application'), $fileName)) {
@@ -81,7 +81,7 @@ class HubCategoryContentController extends Controller
                     "content_type" =>  $request->content_type,
                     "content_description" => $request->content_description,
                     "content" =>  '/images/application/' . $fileName,
-                    "thumbnail" => $request->thumbnail,
+                    "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" =>  $request->hub_category_id,
                     "status" => 1,
                 ];
@@ -92,7 +92,7 @@ class HubCategoryContentController extends Controller
                     "content_type" =>  $request->content_type,
                     "content_description" => $request->content_description,
                     "content" =>  $request->content,
-                    "thumbnail" => $request->thumbnail,
+                    "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" =>  $request->hub_category_id,
                     "status" => 1,
                 ];
@@ -103,6 +103,20 @@ class HubCategoryContentController extends Controller
 
             //$resultDocument->file_path = '/images/application/' . $fileName;
         }
+    }
+
+    // create a function for uploading thumbnail
+
+    // create a function for creating just link upload 
+
+    // create a route to use to fetch sportlight content 
+
+    public function uploadThumbnail($request){
+        $file = $request->file('thumbnail');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            if ($file->move(public_path('images/thumbnail'), $fileName)) {
+                return '/images/thumbnail/' . $fileName;
+            }
     }
 
     public function uploadVideo(Request $request, Vimeo $vimeo)
@@ -128,7 +142,7 @@ class HubCategoryContentController extends Controller
                     "content_type" =>  $request->content_type,
                     "content_description" => $request->content_description,
                     "content" =>  $video['body']['uri'],
-                    "thumbnail" => $request->thumbnail,
+                    "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" =>  $request->hub_category_id,
                     "status" => 1,
                 ];

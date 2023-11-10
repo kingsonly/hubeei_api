@@ -3,6 +3,7 @@
 use App\Http\Controllers\HubCategoryController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\HubController;
+use App\Http\Controllers\HubCategoryContentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,4 @@ Route::post('/login', [SiteController::class, 'login'])->name('login');
 Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('users-hub');
 Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');
+Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
