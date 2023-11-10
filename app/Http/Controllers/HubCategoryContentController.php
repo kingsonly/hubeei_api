@@ -49,7 +49,7 @@ class HubCategoryContentController extends Controller
                 $this->createEngagement($request);
                 break;
             case "video":
-                $this->uploadVideo($request, Vimeo);
+                $this->uploadOtherFiles($request);
                 break;
             default:
                 $this->uploadOtherFiles($request);
