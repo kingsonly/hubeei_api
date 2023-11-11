@@ -44,7 +44,7 @@ jobs:
             
 workflows:
   version: 2
-  Byspoly_deploy:
+  Hubeei_api__deploy:
     jobs:
       - deploy-laravel-staging: # Use the pre-configured job, deploy-via-git
           filters:
