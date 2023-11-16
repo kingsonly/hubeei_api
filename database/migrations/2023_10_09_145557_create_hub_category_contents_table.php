@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string("content_description");
             $table->string("content");
             $table->string("thumbnail");
+            $table->integer("sportlight")->default(0);
+            $table->integer("views")->default(0);
             $table->integer("with_engagement")->default(0);
             $table->integer("hub_category_id");
             $table->integer("position")->nullable()->comment("all content should be ordered by possition");
