@@ -83,7 +83,9 @@ class HubCategoryContentController extends Controller
                     "content" =>  '/images/application/' . $fileName,
                     "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" =>  $request->hub_category_id,
+                    "sportlight" => $request->sportlight,
                     "status" => 1,
+                    
                 ];
                 $this->createNewContent($data);
             } else {
