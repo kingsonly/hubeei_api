@@ -24,3 +24,4 @@ Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('user
 Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');
 Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
+Route::post('/content/change-content-position', [HubCategoryContentController::class, 'changeContentPosition'])->name('change-content-position');

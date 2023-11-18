@@ -260,13 +260,16 @@ class HubCategoryContentController extends Controller
 
     public function changeContentPosition(Request $request)
     {
+        $data = $request->data;
+        
 
-        $contentIds = $request->content_id;
-        $position = 1; // Start position
-
-        foreach ($contentIds as $contentId) {
-            HubCategoryContent::where('id', $contentId)->update(['position' => $position]);
-            $position++;
+        foreach ($data as $value) {
+            $position = 1; // Start position
+            foreach($value->content as $content){
+                HubCategoryContent::where(['id' => $content->id])->update(['position' => $position,"hub_category_id" => $value->id]);
+                $position++;
+            }
+            
         }
 
         return response()->json(["status" => "success", 'message' => 'Content order updated successfully']);
