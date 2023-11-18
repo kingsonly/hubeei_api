@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\HubCategoryController;
-use App\Http\Controllers\SiteController;
-use App\Http\Controllers\HubController;
 use App\Http\Controllers\HubCategoryContentController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\HubCategoryController;
+use App\Http\Controllers\HubController;
+use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
-*/
+ */
 
 Route::post('/register', [SiteController::class, 'register'])->name('register');
 Route::post('/login', [SiteController::class, 'login'])->name('login');
@@ -25,3 +24,4 @@ Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategory
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');
 Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
 Route::post('/content/change-content-position', [HubCategoryContentController::class, 'changeContentPosition'])->name('change-content-position');
+Route::get('/content/get-spotlight-content/{id}', [HubCategoryContentController::class, 'getSpotlightContent'])->name('get-spotlight-content');

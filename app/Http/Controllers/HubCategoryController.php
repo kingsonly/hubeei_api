@@ -105,7 +105,7 @@ class HubCategoryController extends Controller
     public function getCategoryWithContent($id)
     {
         // get hub with content and category 
-        $model = HubCategory::where(["hub_id" => $id])->with("content")->get();
+        $model = HubCategory::where(["hub_id" => $id])->with("content")->orderBy('position', 'desc')->get();
         if ($model) {
             return response()->json(["status" => "success", "data" => $model], 200);
         }

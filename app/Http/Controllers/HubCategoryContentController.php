@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EngagementOption;
 use App\Models\Engagment;
 use App\Models\HubCategoryContent;
-use App\Models\User;
+use App\Models\Hubs;
 use App\Models\UserLikedContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +32,6 @@ class HubCategoryContentController extends Controller
         // extra engagment
 
         // special
-
 
         $model = $id;
         if ($model) {
@@ -63,7 +62,7 @@ class HubCategoryContentController extends Controller
 
     public function delete(HubCategoryContent $id)
     {
-        //ensure that delete also delete the uploaded content 
+        //ensure that delete also delete the uploaded content
         if ($id->delete()) {
             return response()->json(["status" => "success"], 200);
         }
@@ -78,24 +77,24 @@ class HubCategoryContentController extends Controller
             if ($file->move(public_path('images/application'), $fileName)) {
                 $data = [
                     "name" => $request->name,
-                    "content_type" =>  $request->content_type,
+                    "content_type" => $request->content_type,
                     "content_description" => $request->content_description,
-                    "content" =>  '/images/application/' . $fileName,
+                    "content" => '/images/application/' . $fileName,
                     "thumbnail" => $this->uploadThumbnail($request),
-                    "hub_category_id" =>  $request->hub_category_id,
+                    "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
                     "status" => 1,
-                    
+
                 ];
                 $this->createNewContent($data);
             } else {
                 $data = [
                     "name" => $request->name,
-                    "content_type" =>  $request->content_type,
+                    "content_type" => $request->content_type,
                     "content_description" => $request->content_description,
-                    "content" =>  $request->content,
+                    "content" => $request->content,
                     "thumbnail" => $this->uploadThumbnail($request),
-                    "hub_category_id" =>  $request->hub_category_id,
+                    "hub_category_id" => $request->hub_category_id,
                     "status" => 1,
                 ];
                 $this->createNewContent($data);
@@ -109,16 +108,17 @@ class HubCategoryContentController extends Controller
 
     // create a function for uploading thumbnail
 
-    // create a function for creating just link upload 
+    // create a function for creating just link upload
 
-    // create a route to use to fetch sportlight content 
+    // create a route to use to fetch sportlight content
 
-    public function uploadThumbnail($request){
+    public function uploadThumbnail($request)
+    {
         $file = $request->file('thumbnail');
-            $fileName = time() . '.' . $file->getClientOriginalExtension();
-            if ($file->move(public_path('images/thumbnail'), $fileName)) {
-                return '/images/thumbnail/' . $fileName;
-            }
+        $fileName = time() . '.' . $file->getClientOriginalExtension();
+        if ($file->move(public_path('images/thumbnail'), $fileName)) {
+            return '/images/thumbnail/' . $fileName;
+        }
     }
 
     public function uploadVideo(Request $request, Vimeo $vimeo)
@@ -141,11 +141,11 @@ class HubCategoryContentController extends Controller
             if ($video) {
                 $data = [
                     "name" => $request->name,
-                    "content_type" =>  $request->content_type,
+                    "content_type" => $request->content_type,
                     "content_description" => $request->content_description,
-                    "content" =>  $video['body']['uri'],
+                    "content" => $video['body']['uri'],
                     "thumbnail" => $this->uploadThumbnail($request),
-                    "hub_category_id" =>  $request->hub_category_id,
+                    "hub_category_id" => $request->hub_category_id,
                     "status" => 1,
                 ];
                 if ($this->createNewContent($data)) {
@@ -203,9 +203,9 @@ class HubCategoryContentController extends Controller
         $userLikedContent = UserLikedContent::where(["user_cookies_id" => $id])->get(); // Replace $userId with the user's ID you want to fetch liked content for.
 
         $likedContentByCategory = $userLikedContent // Assuming you have defined the "likedContent" relationship in your User model.
-            ->map(function ($likedContent) {
-                return $likedContent->content->load('category');
-            })
+        ->map(function ($likedContent) {
+            return $likedContent->content->load('category');
+        })
             ->groupBy(function ($content) {
                 return $content->category->name;
             });
@@ -226,17 +226,17 @@ class HubCategoryContentController extends Controller
         if ($validator->fails()) {
             return response()->json(["status" => "error", "data" => $validator->errors()], 400);
         }
-        // start transaction from here 
+        // start transaction from here
         $engagmentData = json_decode($model->engagment_data);
         DB::beginTransaction();
         try {
-            foreach ($engagmentData  as $value) {
+            foreach ($engagmentData as $value) {
                 $model->question = $value["question"];
                 $model->hub_content_id = $value["hub_content_id"];
                 $model->answer_type = $value["answer_type"];
                 $model->status = 1;
                 if ($model->save()) {
-                    // save answers too 
+                    // save answers too
                     $optionModel = new EngagementOption();
                     foreach ($value["answers"] as $answers) {
                         $optionModel->engagment_id = $model->id;
@@ -247,7 +247,7 @@ class HubCategoryContentController extends Controller
                     }
                 }
             }
-            return response()->json(["status" => "success",], 200);
+            return response()->json(["status" => "success"], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["status" => "error", "message" => "Something whent wrong, Please try again later", "data" => $e], 400);
@@ -261,17 +261,35 @@ class HubCategoryContentController extends Controller
     public function changeContentPosition(Request $request)
     {
         $data = $request->data;
-        
 
         foreach ($data as $value) {
             $position = 1; // Start position
-            foreach($value["content"] as $content){
-                HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
+            foreach ($value["content"] as $content) {
+                HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position, "hub_category_id" => $value["id"]]);
                 $position++;
             }
-            
+
         }
 
         return response()->json(["status" => "success", 'message' => 'Content order updated successfully']);
+    }
+
+    public function getSpotlightContent($id)
+    {
+        //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
+        $hub = Hubs::with(['categories.content' => function ($query) {
+            $query->where('sportlight', 1)->orderBy('position', 'desc');
+        }])->find($id);
+
+        // Access the contents
+        $contents = $hub->categories->flatMap->content;
+        if (count($contents) > 0) {
+            return response()->json(["status" => "success", 'data' => $contents]);
+
+        } else {
+            return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
+
+        }
+
     }
 }

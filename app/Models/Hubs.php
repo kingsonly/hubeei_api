@@ -11,4 +11,9 @@ class Hubs extends Model
     use HasFactory;
 
     protected $table = 'hubs';
+
+     public function categories()
+    {
+        return $this->hasMany(HubCategory::class,"hub_id", "id");
+    }
 }
