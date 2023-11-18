@@ -266,7 +266,7 @@ class HubCategoryContentController extends Controller
         foreach ($data as $value) {
             $position = 1; // Start position
             foreach($value->content as $content){
-                HubCategoryContent::where(['id' => $content->id])->update(['position' => $position,"hub_category_id" => $value->id]);
+                HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
                 $position++;
             }
             
