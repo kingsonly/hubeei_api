@@ -24,15 +24,6 @@ class HubCategoryContentController extends Controller
     // ensure that we can pull for every senario
     public function view(HubCategoryContent $id)
     {
-        //image
-        //mp3
-        //pdf
-        //engagment
-        //video
-        // extra engagment
-
-        // special
-
         $model = $id;
         if ($model) {
             return response()->json(["status" => "success", "data" => $model], 200);
@@ -58,6 +49,33 @@ class HubCategoryContentController extends Controller
 
     public function update(Request $request, HubCategoryContent $id)
     {
+        $model = $id;
+        if ($request->file(thumbnail) != null) {
+            $file = $request->file('thumbnail');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            if ($file->move(public_path('images/application'), $fileName)) {
+                $model->thumbnail = '/images/application/' . $fileName;
+            }
+        }
+
+        if ($request->file("content") != null) {
+            $file = $request->file('content');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            if ($file->move(public_path('images/application'), $fileName)) {
+                $model->content = '/images/application/' . $fileName;
+            }
+        }
+
+        $model->name = $request->name;
+        $model->content_type = $request->content_type;
+        $request->content_description = $request->ccontent_description;
+        $request->sportlight = $request->sportlight;
+
+        if ($model->save()) {
+            return response()->json(["status" => "success"], 200);
+        }
+        return response()->json(["status" => "error"], 400);
+
     }
 
     public function delete(HubCategoryContent $id)
@@ -84,7 +102,6 @@ class HubCategoryContentController extends Controller
                     "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
                     "status" => 1,
-
                 ];
                 $this->createNewContent($data);
             } else {

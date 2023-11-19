@@ -29,3 +29,4 @@ Route::get('/content/update-content-views/{id}', [HubCategoryContentController::
 Route::get('/content/get-top-ten-views/{id}', [HubCategoryContentController::class, 'getTopTenViews'])->name('update-content-views');
 Route::get('/content/search/{id}/{search}', [HubCategoryContentController::class, 'search'])->name('content-search');
 Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, 'likeUnlike'])->name('like-un-like');
+Route::patch('/content/update/{id}', [HubCategoryContentController::class, 'update'])->name('update-content');
