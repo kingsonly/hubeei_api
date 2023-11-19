@@ -27,3 +27,5 @@ Route::post('/content/change-content-position', [HubCategoryContentController::c
 Route::get('/content/get-spotlight-content/{id}', [HubCategoryContentController::class, 'getSpotlightContent'])->name('get-spotlight-content');
 Route::get('/content/update-content-views/{id}', [HubCategoryContentController::class, 'updateContentViews'])->name('update-content-views');
 Route::get('/content/get-top-ten-views/{id}', [HubCategoryContentController::class, 'getTopTenViews'])->name('update-content-views');
+Route::get('/content/search/{id}/{search}', [HubCategoryContentController::class, 'search'])->name('content-search');
+Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, 'likeUnlike'])->name('like-un-like');

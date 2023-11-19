@@ -187,17 +187,6 @@ class HubCategoryContentController extends Controller
         return false;
     }
 
-    public function likeContent(Request $request)
-    {
-        $model = new UserLikedContent();
-        $model->user_cookies_id = $request->user_cookies;
-        $model->content_id = $request->content;
-        if ($model->save()) {
-            return response()->json(["status" => "success"], 200);
-        }
-        return response()->json(["status" => "error"], 400);
-    }
-
     public function getLikedContent($id)
     {
         $userLikedContent = UserLikedContent::where(["user_cookies_id" => $id])->get(); // Replace $userId with the user's ID you want to fetch liked content for.
@@ -212,8 +201,24 @@ class HubCategoryContentController extends Controller
         return response()->json(["status" => "success", "data" => $likedContentByCategory], 200);
     }
 
-    public function search()
+    public function search($id, $search)
     {
+        //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
+        $hub = Hubs::with(['categories.content' => function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')->orderBy('position', 'desc');
+
+        }])->find($id);
+
+        // Access the contents
+        $contents = $hub->categories;
+        if (count($contents) > 0) {
+            return response()->json(["status" => "success", 'data' => $contents]);
+
+        } else {
+            return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
+
+        }
+
     }
 
     public function createEngagement(Request $request)
@@ -319,6 +324,28 @@ class HubCategoryContentController extends Controller
             return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
 
         }
+
+    }
+
+    public function likeUnlike($id, Request $request)
+    {
+        $headerValue = $request->header('user');
+
+        $model = UserLikedContent::where(["content_id" => $id, "user_id" => $headerValue])->get();
+        if ($model) {
+            $model->delete();
+            return response()->json(["status" => "success"], 200);
+        } else {
+            $creatLike = new UserLikedContent();
+            $creatLike->user_cookies_id = $headerValue;
+            $creatLike->content_id = $id;
+            if ($creatLike->save()) {
+                return response()->json(["status" => "success"], 200);
+            } else {
+                return response()->json(["status" => "error", "message" => "could not create a new like"], 400);
+            }
+        }
+        return response()->json(["status" => "error", "message" => "Something went wrong"], 400);
 
     }
 }
