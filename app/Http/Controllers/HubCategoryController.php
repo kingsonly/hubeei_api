@@ -107,7 +107,7 @@ class HubCategoryController extends Controller
             $headerValue = $request->header('user');
 
             // get hub with content and category
-            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked"])->orderBy('position', 'desc')->get();
+            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked"])->orderBy('position', 'asc')->get();
 
             if ($models) {
                 foreach ($models as $model) {
@@ -135,7 +135,7 @@ class HubCategoryController extends Controller
             }
 
         } else {
-            $model = HubCategory::where(["hub_id" => $id])->with("content.liked")->orderBy('position', 'desc')->get();
+            $model = HubCategory::where(["hub_id" => $id])->with("content.liked")->orderBy('position', 'asc')->get();
             if ($model) {
                 return response()->json(["status" => "success", "data" => $model], 200);
             }
