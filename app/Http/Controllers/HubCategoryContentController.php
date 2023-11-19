@@ -49,6 +49,8 @@ class HubCategoryContentController extends Controller
 
     public function update(Request $request, HubCategoryContent $id)
     {
+        return response()->json(["status" => $request->name], 200);
+
         $model = $id;
         if ($request->file("thumbnail") != null) {
             $file = $request->file('thumbnail');
