@@ -50,7 +50,7 @@ class HubCategoryContentController extends Controller
     public function update(Request $request, HubCategoryContent $id)
     {
         $model = $id;
-        if ($request->file(thumbnail) != null) {
+        if ($request->file("thumbnail") != null) {
             $file = $request->file('thumbnail');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             if ($file->move(public_path('images/application'), $fileName)) {
