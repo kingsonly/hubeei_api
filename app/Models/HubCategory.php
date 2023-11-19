@@ -16,6 +16,6 @@ class HubCategory extends Model
 
     public function content()
     {
-        return $this->HasMany(HubCategoryContent::class, "hub_category_id", "id");
+        return $this->HasMany(HubCategoryContent::class, "hub_category_id", "id")->orderBy('position', 'desc');
     }
 }
