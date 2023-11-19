@@ -25,3 +25,5 @@ Route::post('/create-category', [HubCategoryController::class, 'create'])->name(
 Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
 Route::post('/content/change-content-position', [HubCategoryContentController::class, 'changeContentPosition'])->name('change-content-position');
 Route::get('/content/get-spotlight-content/{id}', [HubCategoryContentController::class, 'getSpotlightContent'])->name('get-spotlight-content');
+Route::get('/content/update-content-views/{id}', [HubCategoryContentController::class, 'updateContentViews'])->name('update-content-views');
+Route::get('/content/get-top-ten-views/{id}', [HubCategoryContentController::class, 'getTopTenViews'])->name('update-content-views');

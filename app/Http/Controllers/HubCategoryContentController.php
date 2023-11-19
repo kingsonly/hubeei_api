@@ -292,4 +292,33 @@ class HubCategoryContentController extends Controller
         }
 
     }
+
+    public function updateContentViews($id)
+    {
+        $model = HubCategoryContent::where(['id' => $id]);
+        if ($model->update(['view' => $model->view + 1])) {
+            return response()->json(["status" => "success", 'message' => 'number of views has been updated']);
+        }
+        return response()->json(["status" => "error", 'message' => 'could not update  views']);
+
+    }
+
+    public function getTopTenViews($id)
+    {
+        //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
+        $hub = Hubs::with(['categories.content' => function ($query) {
+            $query->orderBy('views', 'desc')->limit(10);
+        }])->find($id);
+
+        // Access the contents
+        $contents = $hub->categories->flatMap->content;
+        if (count($contents) > 0) {
+            return response()->json(["status" => "success", 'data' => $contents]);
+
+        } else {
+            return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
+
+        }
+
+    }
 }

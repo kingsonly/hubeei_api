@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\HubCategory;
-use App\Models\Hubs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +26,7 @@ class HubCategoryController extends Controller
 
     public function create(Request $request)
     {
-        // if its not a paid hub check if they have reach their max also check what remains on their max and evaluate with he content size if it does not go above the max, create the content and update user uage 
+        // if its not a paid hub check if they have reach their max also check what remains on their max and evaluate with he content size if it does not go above the max, create the content and update user uage
         $validator = Validator::make($request->all(), [
             "name" => "required",
             "hub_id" => "required",
@@ -102,13 +101,70 @@ class HubCategoryController extends Controller
         return response()->json(["status" => "success", 'message' => 'Category order updated successfully']);
     }
 
-    public function getCategoryWithContent($id)
+    public function getCategoryWithContent($id, Request $request)
     {
-        // get hub with content and category 
-        $model = HubCategory::where(["hub_id" => $id])->with("content")->orderBy('position', 'desc')->get();
-        if ($model) {
-            return response()->json(["status" => "success", "data" => $model], 200);
+        if ($request->header('user') != null) {
+            $headerValue = $request->header('user');
+
+            // get hub with content and category
+            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked"])->orderBy('position', 'desc')->get();
+
+            if ($models) {
+                foreach ($models as $model) {
+                    foreach ($model->content as $content) {
+
+                        if (count($content->liked) > 0) {
+                            foreach ($content->liked as $contentLike) {
+                                if ($contentLike->user_id == $headerValue) {
+                                    $content->like = 1;
+                                    break;
+                                } else {
+                                    $content->like = 0;
+                                }
+                            }
+
+                        } else {
+                            $content->like = 0;
+
+                        }
+
+                    }
+                }
+
+                return response()->json(["status" => "success", "data" => $models], 200);
+            }
+
+        } else {
+            $model = HubCategory::where(["hub_id" => $id])->with("content.liked")->orderBy('position', 'desc')->get();
+            if ($model) {
+                return response()->json(["status" => "success", "data" => $model], 200);
+            }
+
         }
+
         return response()->json(["status" => "error", "message" => "could not find a record"], 400);
     }
+
+    public function likeUnlike($id, Request $request)
+    {
+        $headerValue = $request->header('user');
+
+        $model = UserLikedContent::where(["content_id" => $id, "user_id" => $headerValue])->get();
+        if ($model) {
+            $model->delete();
+            return response()->json(["status" => "success"], 200);
+        } else {
+            $creatLike = new UserLikedContent();
+            $creatLike->user_cookies_id = $headerValue;
+            $creatLike->content_id = $id;
+            if ($creatLike->save()) {
+                return response()->json(["status" => "success"], 200);
+            } else {
+                return response()->json(["status" => "error", "message" => "could not create a new like"], 400);
+            }
+        }
+        return response()->json(["status" => "error", "message" => "Something went wrong"], 400);
+
+    }
+
 }

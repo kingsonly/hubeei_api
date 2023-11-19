@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class HubCategoryContent extends Model
 {
     use HasFactory;
+
     public function category()
     {
         return $this->HasOne(HubCategory::class, "id", "hub_category_id");
+    }
+
+    public function liked()
+    {
+        return $this->HasMany(UserLikedContent::class, "content_id", "id");
     }
 }
