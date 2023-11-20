@@ -30,3 +30,4 @@ Route::get('/content/get-top-ten-views/{id}', [HubCategoryContentController::cla
 Route::get('/content/search/{id}/{search}', [HubCategoryContentController::class, 'search'])->name('content-search');
 Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, 'likeUnlike'])->name('like-un-like');
 Route::post('/content/update/{id}', [HubCategoryContentController::class, 'update'])->name('update-content');
+Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delete'])->name('delete-content');

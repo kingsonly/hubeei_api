@@ -69,8 +69,8 @@ class HubCategoryContentController extends Controller
 
         $model->name = $request->name;
         $model->content_type = $request->content_type;
-        $request->content_description = $request->ccontent_description;
-        $request->sportlight = $request->sportlight;
+        $model->content_description = $request->content_description;
+        $model->sportlight = $request->sportlight;
 
         if ($model->save()) {
             return response()->json(["status" => "success"], 200);
