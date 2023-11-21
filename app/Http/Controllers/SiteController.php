@@ -102,7 +102,23 @@ class SiteController extends Controller
             return $category->content->count(); // Assuming there's a content_count column
         });
 
-        $data = ["totalCategories" => $totalCategories, "totalSize" => $totalSumOfSize, "totalContents" => $totalContents];
+        $data = [
+            [
+                "title" => "Total Categories",
+                "count" => $totalCategories,
+            ],
+
+            [
+                "title" => "Total Size",
+                "count" => $totalSumOfSize,
+            ],
+
+            [
+                "title" => "Total Contents",
+                "count" => $totalContents,
+            ],
+
+        ];
 
         return response()->json(["status" => "success", "data" => $data], 200);
     }
