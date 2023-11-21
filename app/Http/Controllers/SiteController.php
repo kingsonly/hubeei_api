@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\Welcome;
 use App\Models\Hubs;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class SiteController extends Controller
 {
     public function register(Request $request)
     {
-
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users',
@@ -36,7 +33,6 @@ class SiteController extends Controller
         $user->password = bcrypt($request->input('password'));
         $user->name = ucwords($request->input('firstname')) . " " . ucwords($request->input('lastname'));
         $user->email_verified_at = $time->format("Y-m-d h:m:s");
-
 
         if ($user->save()) {
             //create a new fee hub
@@ -69,7 +65,7 @@ class SiteController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return  response()->json(["status" => "error", "data" => $validator->errors()], 400);
+            return response()->json(["status" => "error", "data" => $validator->errors()], 400);
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
@@ -78,7 +74,7 @@ class SiteController extends Controller
 
             return response()->json(['status' => 'success', 'message' => 'user logged in', 'data' => $authUser], 200);
         } else {
-            return  response()->json(["status" => "error", "message" => "Wrong Email or Password"], 400);
+            return response()->json(["status" => "error", "message" => "Wrong Email or Password"], 400);
         }
     }
 
@@ -89,4 +85,26 @@ class SiteController extends Controller
     public function getPaymentPlans()
     {
     }
+
+    public function dashboardCardsContent($id)
+    {
+        $model = Hubs::with(['categories' => function ($query) {
+            $query->withSum('content', 'size');
+        }])->find($id);
+
+        $totalSumOfSize = $model->categories->sum(function ($category) {
+            return $category->content_sum_size;
+        });
+
+        $totalCategories = $model->categories->count();
+
+        $totalContents = $model->categories->sum(function ($category) {
+            return $category->content->count(); // Assuming there's a content_count column
+        });
+
+        $data = ["totalCategories" => $totalCategories, "totalSize" => $totalSumOfSize, "totalContents" => $totalContents];
+
+        return response()->json(["status" => "success", "data" => $data], 200);
+    }
+
 }

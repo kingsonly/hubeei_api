@@ -92,8 +92,18 @@ class HubCategoryContentController extends Controller
     {
         if ($request->content_type == "video" or $request->content_type == "audio" or $request->content_type == "pdf") {
             $file = $request->file('content');
+            $thumbNail = $request->file('thumbnail');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             if ($file->move(public_path('images/application'), $fileName)) {
+                $fileSizeInBytes = $file->getSize();
+                $fileSizeInKB = $fileSizeInBytes / 1024;
+                $fileSizeInMB = $fileSizeInKB / 1024;
+
+                $thumbNailFileSizeInBytes = $thumbNail->getSize();
+                $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
+                $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
+                $size = $thumbNailFileSizeInMB + $fileSizeInMB;
+
                 $data = [
                     "name" => $request->name,
                     "content_type" => $request->content_type,
@@ -102,8 +112,10 @@ class HubCategoryContentController extends Controller
                     "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
+                    "size" => $size,
                     "status" => 1,
                 ];
+
                 $this->createNewContent($data);
             } else {
                 $data = [
@@ -122,6 +134,38 @@ class HubCategoryContentController extends Controller
 
             //$resultDocument->file_path = '/images/application/' . $fileName;
         }
+        if ($request->content_type == "link") {
+            $file = $request->content;
+            $thumbNail = $request->file('thumbnail');
+
+            $sizeInBytes = mb_strlen($file, '8bit');
+            $sizeInMB = $sizeInBytes / (1024 * 1024);
+
+            $thumbNailFileSizeInBytes = $thumbNail->getSize();
+            $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
+            $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
+
+            $size = $thumbNailFileSizeInMB + $sizeInMB;
+
+            $data = [
+                "name" => $request->name,
+                "content_type" => $request->content_type,
+                "content_description" => $request->content_description,
+                "content" => $file,
+                "thumbnail" => $this->uploadThumbnail($request),
+                "hub_category_id" => $request->hub_category_id,
+                "sportlight" => $request->sportlight,
+                "size" => $size,
+                "status" => 1,
+            ];
+
+            $this->createNewContent($data);
+
+            //$file->move(public_path('images/application'), $fileName);
+
+            //$resultDocument->file_path = '/images/application/' . $fileName;
+        }
+
     }
 
     // create a function for uploading thumbnail
@@ -186,6 +230,7 @@ class HubCategoryContentController extends Controller
         $model->thumbnail = $data["thumbnail"];
         $model->hub_category_id = $data["hub_category_id"];
         $model->status = $data["status"];
+        $model->size = $data["size"];
         if ($model->save()) {
             $getAllCategoriesContent = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('id', 'desc')->get();
             $counter = 1;
