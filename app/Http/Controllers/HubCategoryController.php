@@ -117,7 +117,7 @@ class HubCategoryController extends Controller
                             foreach ($content->liked as $contentLike) {
                                 if ($contentLike->use_cookies_id == $headerValue) {
                                     $content->like = true;
-                                    break;
+                                    continue;
                                 } else {
                                     $content->like = false;
                                 }
