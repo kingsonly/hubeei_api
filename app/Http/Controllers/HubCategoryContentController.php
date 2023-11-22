@@ -394,7 +394,7 @@ class HubCategoryContentController extends Controller
     {
         $headerValue = $request->header('user');
 
-        $model = UserLikedContent::where(["content_id" => $id, "user_id" => $headerValue])->get();
+        $model = UserLikedContent::where(["content_id" => $id, "user_cookies_id" => $headerValue])->get();
         if ($model) {
             $model->delete();
             return response()->json(["status" => "success"], 200);
