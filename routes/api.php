@@ -32,3 +32,4 @@ Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, '
 Route::post('/content/update/{id}', [HubCategoryContentController::class, 'update'])->name('update-content');
 Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delete'])->name('delete-content');
 Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsContent'])->name('dashboard-stats');
+Route::get('/hub/create', [HubController::class, 'create'])->name('hub-create');

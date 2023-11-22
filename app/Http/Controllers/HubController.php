@@ -11,7 +11,7 @@ class HubController extends Controller
 {
     //
     /**
-     * 
+     *
      *
      * @return void
      */
@@ -35,7 +35,7 @@ class HubController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "name" => 'required',
+            "name" => 'required|unique:hub',
             'hubDescription' => 'required',
             'url' => 'required|unique:hub',
         ]);

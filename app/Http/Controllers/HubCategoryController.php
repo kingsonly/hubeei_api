@@ -145,26 +145,4 @@ class HubCategoryController extends Controller
         return response()->json(["status" => "error", "message" => "could not find a record"], 400);
     }
 
-    public function likeUnlike($id, Request $request)
-    {
-        $headerValue = $request->header('user');
-
-        $model = UserLikedContent::where(["content_id" => $id, "user_id" => $headerValue])->get();
-        if ($model) {
-            $model->delete();
-            return response()->json(["status" => "success"], 200);
-        } else {
-            $creatLike = new UserLikedContent();
-            $creatLike->user_cookies_id = $headerValue;
-            $creatLike->content_id = $id;
-            if ($creatLike->save()) {
-                return response()->json(["status" => "success"], 200);
-            } else {
-                return response()->json(["status" => "error", "message" => "could not create a new like"], 400);
-            }
-        }
-        return response()->json(["status" => "error", "message" => "Something went wrong"], 400);
-
-    }
-
 }
