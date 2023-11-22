@@ -115,9 +115,9 @@ class HubCategoryController extends Controller
 
                         if (count($content->liked) > 0) {
                             foreach ($content->liked as $contentLike) {
-                                if ($contentLike->use_cookies_id == $headerValue) {
+                                if ($contentLike->user_cookies_id == $headerValue) {
                                     $content->like = true;
-                                    continue;
+                                    break;
                                 } else {
                                     $content->like = false;
                                 }
