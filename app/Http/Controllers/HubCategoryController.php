@@ -116,10 +116,10 @@ class HubCategoryController extends Controller
                         if (count($content->liked) > 0) {
                             foreach ($content->liked as $contentLike) {
                                 if ($contentLike->use_cookies_id == $headerValue) {
-                                    $content->like = 1;
+                                    $content->like = true;
                                     break;
                                 } else {
-                                    $content->like = 0;
+                                    $content->like = false;
                                 }
                             }
 
