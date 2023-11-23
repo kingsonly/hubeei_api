@@ -264,11 +264,12 @@ class HubCategoryContentController extends Controller
         return response()->json(["status" => "success", "data" => $likedContentByCategory], 200);
     }
 
-    public function search($id, $search)
+    public function search($id, Request $search)
     {
+        $data = $search->query;
         //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
-        $hub = Hubs::with(['categories.content' => function ($query) use ($search) {
-            $query->where('name', 'like', '%' . $search . '%')->orderBy('position', 'desc');
+        $hub = Hubs::with(['categories.content' => function ($query) use ($data) {
+            $query->where('name', 'like', '%' . $data . '%')->orderBy('position', 'desc');
 
         }])->find($id);
 
