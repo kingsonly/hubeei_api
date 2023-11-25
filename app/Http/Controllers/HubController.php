@@ -50,7 +50,7 @@ class HubController extends Controller
         $model->user_id = auth()->guard('sanctum')->user()->id;
         $model->status = 1;
         if ($model->save) {
-            return response()->json(["status" => "sucess"], 200);
+            return response()->json(["status" => "sucess", "data" => $model], 200);
         }
         return response()->json(["status" => "error"], 400);
     }
