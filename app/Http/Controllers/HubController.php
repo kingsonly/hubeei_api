@@ -41,7 +41,7 @@ class HubController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'message' => "ensure that all required filed are properly filled "], 400);
+            return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
         }
         $model = new Hubs();
         $model->name = $request->hubName;
@@ -49,7 +49,7 @@ class HubController extends Controller
         $model->url = $request->url;
         $model->user_id = auth()->guard('sanctum')->user()->id;
         $model->status = 1;
-        if ($model->save) {
+        if ($model->save()) {
             return response()->json(["status" => "sucess", "data" => $model], 200);
         }
         return response()->json(["status" => "error"], 400);
