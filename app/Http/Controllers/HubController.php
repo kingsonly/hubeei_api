@@ -44,7 +44,7 @@ class HubController extends Controller
             return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
         }
         $model = new Hubs();
-        $model->name = $request->hubName;
+        $model->name = $request->name;
         $model->description = $request->hubDescription;
         $model->url = $request->url;
         $model->user_id = auth()->guard('sanctum')->user()->id;
