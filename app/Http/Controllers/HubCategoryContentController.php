@@ -266,7 +266,7 @@ class HubCategoryContentController extends Controller
 
     public function search($id, Request $search)
     {
-        $data = $search->query;
+        $data = $search->input("query");
         //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
         $hub = Hubs::with(['categories.content' => function ($query) use ($data) {
             $query->where('name', 'like', '%' . $data . '%')->orderBy('position', 'desc');
