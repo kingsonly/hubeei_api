@@ -44,7 +44,7 @@ jobs:
       - run:
           name: ssh and effect migration  
           command: |
-             ssh -p 7822 -t skillz@185.160.67.60 "hubeei/api && php artisan migrate"
+             ssh -p 7822 -t skillz@185.160.67.60 "cd hubeei/api && php artisan migrate"
             
             
 workflows:
