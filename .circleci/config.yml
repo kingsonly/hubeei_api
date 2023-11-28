@@ -41,6 +41,11 @@ jobs:
           name: ssh login  
           command: |
              rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ skillz@185.160.67.60:hubeei/api
+      - run:
+          name: ssh and effect migration  
+          command: |
+             ssh -p 7822 -t skillz@185.160.67.60 "hubeei/api && php artisan migrate"
+            
             
 workflows:
   version: 2
