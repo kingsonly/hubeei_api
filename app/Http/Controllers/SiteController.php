@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hubs;
+use App\Models\HubSettings;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +46,49 @@ class SiteController extends Controller
 
             // note change the sending of email to become a queue
             if ($hub->save()) {
+                $data = [
+                    [
+                        "name" => "logo",
+                        "value" => "",
+                    ],
+                    [
+                        "name" => "menu",
+                        "value" => 1,
+                    ]
+                    ,
+                    [
+                        "name" => "sportlight",
+                        "value" => 0,
+                    ]
+                    ,
+                    [
+                        "name" => "search",
+                        "value" => 1,
+                    ]
+                    ,
+                    [
+                        "name" => "content",
+                        "value" => "#000",
+                    ]
+                    ,
+                    [
+                        "name" => "category",
+                        "value" => "#000",
+                    ],
+                    [
+                        "name" => "backgound",
+                        "value" => "#000",
+                    ],
+                    [
+                        "name" => "registration",
+                        "value" => 0,
+                    ],
+                ];
+
+                foreach ($data as $value) {
+                    $this->hubSettings($value, $hub->id);
+                }
+
                 try {
                     //Mail::to($user->email)->send(new Welcome($user));
                     return response()->json(['status' => 'success', 'message' => " created successfully", 'data' => $user], 201);
@@ -121,6 +165,20 @@ class SiteController extends Controller
         ];
 
         return response()->json(["status" => "success", "data" => $data], 200);
+    }
+
+    public function hubSettings($data, $hubId)
+    {
+        $model = new HubSettings();
+        $model->value = $data["value"];
+        $model->name = $data["name"];
+        $model->hub_id = $hubId;
+        $model->status = 1;
+        if ($model->save()) {
+            return true;
+        }
+        return false;
+
     }
 
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\HubCategoryContentController;
 use App\Http\Controllers\HubCategoryController;
 use App\Http\Controllers\HubController;
+use App\Http\Controllers\HubSettingsController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, '
 Route::post('/content/update/{id}', [HubCategoryContentController::class, 'update'])->name('update-content');
 Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delete'])->name('delete-content');
 Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsContent'])->name('dashboard-stats');
+Route::post('/dashboard/hubs/settings/update', [HubSettingsController::class, 'updateSettings'])->name('settings-update');
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/hub/create', [HubController::class, 'create'])->name('hub-create');
 

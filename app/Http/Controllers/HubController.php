@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hubs;
+use App\Models\HubSettings;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +24,7 @@ class HubController extends Controller
 
     public function getUsersHubs($id)
     {
-        $model = Hubs::where(["user_id" => $id])->get();
+        $model = Hubs::where(["user_id" => $id])->with(["settings"])->get();
         return response()->json(["status" => "success", "data" => $model], 200);
     }
 
@@ -50,6 +51,49 @@ class HubController extends Controller
         $model->user_id = auth()->guard('sanctum')->user()->id;
         $model->status = 1;
         if ($model->save()) {
+            // create settings for the hub
+            $data = [
+                [
+                    "name" => "logo",
+                    "value" => "",
+                ],
+                [
+                    "name" => "menu",
+                    "value" => 1,
+                ]
+                ,
+                [
+                    "name" => "sportlight",
+                    "value" => 0,
+                ]
+                ,
+                [
+                    "name" => "search",
+                    "value" => 1,
+                ]
+                ,
+                [
+                    "name" => "content",
+                    "value" => "#000",
+                ]
+                ,
+                [
+                    "name" => "category",
+                    "value" => "#000",
+                ],
+                [
+                    "name" => "backgound",
+                    "value" => "#000",
+                ],
+                [
+                    "name" => "registration",
+                    "value" => 0,
+                ],
+            ];
+
+            foreach ($data as $value) {
+                $this->hubSettings($value, $model->id);
+            }
             return response()->json(["status" => "sucess", "data" => $model], 200);
         }
         return response()->json(["status" => "error"], 400);
@@ -75,6 +119,20 @@ class HubController extends Controller
             return response()->json(["status" => "error", "message" => "could not update records"], 400);
         }
         return response()->json(["status" => "success", "message" => "You have not specified records to be updated"], 400);
+    }
+
+    public function hubSettings($data, $hubId)
+    {
+        $model = new HubSettings();
+        $model->value = $data["value"];
+        $model->name = $data["name"];
+        $model->hub_id = $hubId;
+        $model->status = 1;
+        if ($model->save()) {
+            return true;
+        }
+        return false;
+
     }
 
     public function delete(Hubs $id)

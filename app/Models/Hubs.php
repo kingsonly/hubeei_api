@@ -12,8 +12,12 @@ class Hubs extends Model
 
     protected $table = 'hubs';
 
-     public function categories()
+    public function categories()
     {
-        return $this->hasMany(HubCategory::class,"hub_id", "id");
+        return $this->hasMany(HubCategory::class, "hub_id", "id");
+    }
+    public function settings()
+    {
+        return $this->hasMany(HubSettings::class, "hub_id", "id");
     }
 }
