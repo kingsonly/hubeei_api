@@ -20,7 +20,7 @@ class HubSettingsController extends Controller
         }
 
         if ($model->save()) {
-            return response()->json(["status" => "success"], 200);
+            return response()->json(["status" => "success", "data" => $model], 200);
         } else {
             return response()->json(["status" => "error", "message" => "update settings at this moment"], 200);
 

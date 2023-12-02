@@ -269,7 +269,10 @@ class HubCategoryContentController extends Controller
         $data = $search->input("query");
         //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
         $hub = Hubs::with(['categories.content' => function ($query) use ($data) {
-            $query->where('name', 'like', '%' . $data . '%')->orderBy('position', 'desc');
+            $query->where('name', 'like', '%' . $data . '%')
+                ->orWhere('content_description', 'like', '%' . $data . '%')
+                ->orWhere('content_type', 'like', '%' . $data . '%')
+                ->orderBy('position', 'desc');
 
         }])->find($id);
 
