@@ -67,6 +67,11 @@ class HubCategoryContentController extends Controller
             }
         }
 
+        if ($request->input("content") != null) {
+            $model->content = $request->input("content");
+
+        }
+
         $model->name = $request->name;
         $model->content_type = $request->content_type;
         $model->content_description = $request->content_description;
