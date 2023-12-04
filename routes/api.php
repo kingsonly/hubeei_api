@@ -36,5 +36,4 @@ Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsConte
 Route::post('/dashboard/hubs/settings/update', [HubSettingsController::class, 'updateSettings'])->name('settings-update');
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/hub/create', [HubController::class, 'create'])->name('hub-create');
-
 });

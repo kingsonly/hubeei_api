@@ -383,12 +383,20 @@ class HubCategoryContentController extends Controller
     public function getTopTenViews($id)
     {
         //HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position,"hub_category_id" => $value["id"]]);
-        $hub = Hubs::with(['categories.content' => function ($query) {
-            $query->orderBy('views', 'desc')->limit(10);
-        }])->find($id);
+        // $hub = Hubs::with(['categories.content' => function ($query) {
+        //     $query->orderBy('views', 'desc')->limit(10);
+        // }])->find($id);
 
-        // Access the contents
-        $contents = $hub->categories->flatMap->content;
+        // // Access the contents
+        // $contents = $hub->categories->flatMap->content;
+        $contents = HubCategoryContent::whereHas('category.hub', function ($query) use ($id) {
+            $query->where('id', $id);
+        })
+            ->with('views')
+            ->withCount('views as total_views')
+            ->orderByDesc('total_views')
+            ->get();
+
         if (count($contents) > 0) {
             return response()->json(["status" => "success", 'data' => $contents]);
 
@@ -424,4 +432,5 @@ class HubCategoryContentController extends Controller
         }
 
     }
+
 }

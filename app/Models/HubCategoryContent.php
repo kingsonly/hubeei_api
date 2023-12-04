@@ -18,4 +18,9 @@ class HubCategoryContent extends Model
     {
         return $this->HasMany(UserLikedContent::class, "content_id", "id");
     }
+
+    public function views()
+    {
+        return $this->HasMany(ContentViews::class, "content_id", "id");
+    }
 }
