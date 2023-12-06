@@ -295,6 +295,8 @@ class HubCategoryContentController extends Controller
 
     public function createEngagement(Request $request)
     {
+        return response()->json(["status" => "error", "data" => $request->all()], 200);
+
         $model = new Engagment();
         $validator = Validator::make($request->all(), [
             "engagment_data" => "required",
@@ -307,6 +309,7 @@ class HubCategoryContentController extends Controller
         $engagmentData = json_decode($model->engagment_data);
         DB::beginTransaction();
         try {
+            // create content first
             foreach ($engagmentData as $value) {
                 $model->question = $value["question"];
                 $model->hub_content_id = $value["hub_content_id"];
