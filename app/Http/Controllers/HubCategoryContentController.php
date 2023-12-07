@@ -305,14 +305,28 @@ class HubCategoryContentController extends Controller
             return response()->json(["status" => "error", "data" => $validator->errors()], 400);
         }
         // start transaction from here
-        $engagmentData = json_decode($model->engagment_data);
+        $engagmentData = json_decode($request->input("engagment_data"));
+        $file = $request->input("engagment_data");
+        $thumbNail = $request->file('thumbnail');
+
+        $sizeInBytes = mb_strlen($file, '8bit');
+        $sizeInMB = $sizeInBytes / (1024 * 1024);
+
+        $thumbNailFileSizeInBytes = $thumbNail->getSize();
+        $thumbNailFileSizeInKB = $thumbNailFileSizeInBytes / 1024;
+        $thumbNailFileSizeInMB = $thumbNailFileSizeInKB / 1024;
+
+        $size = $thumbNailFileSizeInMB + $sizeInMB;
+
         $data = [
             "name" => $request->name,
             "content_type" => $request->content_type,
             "content_description" => $request->content_description,
-            "content" => $model->engagment_data,
+            "content" => "Not Available",
             "thumbnail" => $this->uploadThumbnail($request),
             "hub_category_id" => $request->hub_category_id,
+            "sportlight" => $request->sportlight,
+            "size" => $size,
             "status" => 1,
         ];
 
@@ -320,18 +334,18 @@ class HubCategoryContentController extends Controller
         try {
             if ($content = $this->createNewContent($data)) {
                 foreach ($engagmentData as $value) {
-                    $model->question = $value["question"];
+                    $model->question = $value->question;
                     $model->hub_content_id = $content->id;
-                    $model->engagementType = $value["engagementType"];
-                    $model->answer_type = $value["optionType"];
+                    $model->engagementType = $value->engagementType;
+                    $model->answer_type = $value->optionType;
                     $model->status = 1;
                     if ($model->save()) {
                         // save answers too
                         $optionModel = new EngagementOption();
-                        foreach ($value["answers"] as $answers) {
+                        foreach ($value->answers as $answers) {
                             $optionModel->engagment_id = $model->id;
-                            $optionModel->answer = $answers["answer"];
-                            $optionModel->answer_rank = $answers["status"];
+                            $optionModel->answer = $answers->answer;
+                            $optionModel->answer_rank = $answers->status;
                             $optionModel->status = 1;
                             $optionModel->save();
                         }
@@ -340,7 +354,6 @@ class HubCategoryContentController extends Controller
                 return response()->json(["status" => "success"], 200);
 
             }
-            // create content first
 
             return response()->json(["status" => "error"], 400);
         } catch (\Exception $e) {
