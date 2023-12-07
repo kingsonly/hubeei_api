@@ -250,7 +250,7 @@ class HubCategoryContentController extends Controller
             }
 
             //$getAllCategories = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('position', 'asc')->get(); // order by possision
-            return true;
+            return $model;
         }
         return false;
     }
@@ -295,7 +295,6 @@ class HubCategoryContentController extends Controller
 
     public function createEngagement(Request $request)
     {
-        return response()->json(["status" => "error", "data" => $request->all()], 200);
 
         $model = new Engagment();
         $validator = Validator::make($request->all(), [
@@ -307,27 +306,43 @@ class HubCategoryContentController extends Controller
         }
         // start transaction from here
         $engagmentData = json_decode($model->engagment_data);
+        $data = [
+            "name" => $request->name,
+            "content_type" => $request->content_type,
+            "content_description" => $request->content_description,
+            "content" => $model->engagment_data,
+            "thumbnail" => $this->uploadThumbnail($request),
+            "hub_category_id" => $request->hub_category_id,
+            "status" => 1,
+        ];
+
         DB::beginTransaction();
         try {
-            // create content first
-            foreach ($engagmentData as $value) {
-                $model->question = $value["question"];
-                $model->hub_content_id = $value["hub_content_id"];
-                $model->answer_type = $value["answer_type"];
-                $model->status = 1;
-                if ($model->save()) {
-                    // save answers too
-                    $optionModel = new EngagementOption();
-                    foreach ($value["answers"] as $answers) {
-                        $optionModel->engagment_id = $model->id;
-                        $optionModel->answer = $answers["answer"];
-                        $optionModel->answer_rank = $answers["answer_rank"];
-                        $optionModel->status = 1;
-                        $optionModel->save();
+            if ($content = $this->createNewContent($data)) {
+                foreach ($engagmentData as $value) {
+                    $model->question = $value["question"];
+                    $model->hub_content_id = $content->id;
+                    $model->engagementType = $value["engagementType"];
+                    $model->answer_type = $value["optionType"];
+                    $model->status = 1;
+                    if ($model->save()) {
+                        // save answers too
+                        $optionModel = new EngagementOption();
+                        foreach ($value["answers"] as $answers) {
+                            $optionModel->engagment_id = $model->id;
+                            $optionModel->answer = $answers["answer"];
+                            $optionModel->answer_rank = $answers["status"];
+                            $optionModel->status = 1;
+                            $optionModel->save();
+                        }
                     }
                 }
+                return response()->json(["status" => "success"], 200);
+
             }
-            return response()->json(["status" => "success"], 200);
+            // create content first
+
+            return response()->json(["status" => "error"], 400);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(["status" => "error", "message" => "Something whent wrong, Please try again later", "data" => $e], 400);
