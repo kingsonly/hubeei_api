@@ -10,7 +10,6 @@ use App\Models\UserLikedContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Twitter;
 use Vimeo\Laravel\Vimeo;
 
 class HubCategoryContentController extends Controller
@@ -476,13 +475,6 @@ class HubCategoryContentController extends Controller
     public function getEngagementContentHub()
     {
 
-    }
-
-    public function tweet()
-    {
-        $tweets = Twitter::forApiV1()->getDms();
-        return response()->json(["status" => $tweets], 200);
-        dd($tweets);
     }
 
 }

@@ -32,6 +32,7 @@ Route::post('/content/search/{id}', [HubCategoryContentController::class, 'searc
 Route::get('/content/like-un-like/{id}', [HubCategoryContentController::class, 'likeUnlike'])->name('like-un-like');
 Route::post('/content/update/{id}', [HubCategoryContentController::class, 'update'])->name('update-content');
 Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delete'])->name('delete-content');
+Route::get('/content/liked/{id}', [HubCategoryContentController::class, 'getLikedContent'])->name('get-liked-content');
 Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsContent'])->name('dashboard-stats');
 Route::post('/dashboard/hubs/settings/update', [HubSettingsController::class, 'updateSettings'])->name('settings-update');
 Route::get('/hub/get-users-hubs-by-hub-name/{id}', [HubController::class, 'getUsersHubsByHubName']);
