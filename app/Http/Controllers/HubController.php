@@ -30,7 +30,7 @@ class HubController extends Controller
 
     public function getUsersHubsByHubName($id)
     {
-        $model = Hubs::where(["url" => $id])->with(["settings"])->get();
+        $model = Hubs::where(["url" => $id])->with(["settings"])->first();
         return response()->json(["status" => "success", "data" => $model], 200);
     }
 
