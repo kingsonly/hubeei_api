@@ -28,6 +28,12 @@ class HubController extends Controller
         return response()->json(["status" => "success", "data" => $model], 200);
     }
 
+    public function getUsersHubsByHubName($id)
+    {
+        $model = Hubs::where(["url" => $id])->with(["settings"])->get();
+        return response()->json(["status" => "success", "data" => $model], 200);
+    }
+
     public function view(Hubs $id)
     {
         return response()->json(["status" => "success", "data" => $id], 200);

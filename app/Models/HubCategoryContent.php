@@ -23,4 +23,9 @@ class HubCategoryContent extends Model
     {
         return $this->HasMany(ContentViews::class, "content_id", "id");
     }
+
+    public function engagement()
+    {
+        return $this->HasMany(Engagment::class, "hub_content_id", "id");
+    }
 }

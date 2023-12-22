@@ -34,6 +34,7 @@ Route::post('/content/update/{id}', [HubCategoryContentController::class, 'updat
 Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delete'])->name('delete-content');
 Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsContent'])->name('dashboard-stats');
 Route::post('/dashboard/hubs/settings/update', [HubSettingsController::class, 'updateSettings'])->name('settings-update');
+Route::post('hub/get-users-hubs-by-hub-name', [HubController::class, 'getUsersHubsByHubName']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/hub/create', [HubController::class, 'create'])->name('hub-create');
 });

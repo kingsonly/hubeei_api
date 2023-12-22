@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class EngagementOption extends Model
 {
     use HasFactory;
+
+    public function answers()
+    {
+        return $this->HasMany(Engagementanswers::class, "users_answers", "id");
+    }
+
 }
