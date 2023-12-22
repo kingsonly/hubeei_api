@@ -257,15 +257,12 @@ class HubCategoryContentController extends Controller
 
     public function getLikedContent($id)
     {
-        $userLikedContent = UserLikedContent::where(["user_cookies_id" => $id])->get(); // Replace $userId with the user's ID you want to fetch liked content for.
+        $userLikedContent = UserLikedContent::where(["user_cookies_id" => $id])->with(["content.category"])->get(); // Replace $userId with the user's ID you want to fetch liked content for.
 
         $likedContentByCategory = $userLikedContent // Assuming you have defined the "likedContent" relationship in your User model.
         ->map(function ($likedContent) {
             return $likedContent->content->load('category');
-        })
-            ->groupBy(function ($content) {
-                return $content->category->name;
-            });
+        });
         return response()->json(["status" => "success", "data" => $likedContentByCategory], 200);
     }
 

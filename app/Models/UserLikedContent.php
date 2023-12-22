@@ -12,6 +12,6 @@ class UserLikedContent extends Model
 
     public function content()
     {
-        return $this->HasOne(HubCategoryContent::class, "id", "user_cookies_id");
+        return $this->HasOne(HubCategoryContent::class, "id", "content_id");
     }
 }
