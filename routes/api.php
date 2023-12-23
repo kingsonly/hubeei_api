@@ -24,6 +24,7 @@ Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('user
 Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');
 Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
+Route::get('/content/view/{id}', [HubCategoryContentController::class, 'view'])->name('view-content');
 Route::post('/content/change-content-position', [HubCategoryContentController::class, 'changeContentPosition'])->name('change-content-position');
 Route::get('/content/get-spotlight-content/{id}', [HubCategoryContentController::class, 'getSpotlightContent'])->name('get-spotlight-content');
 Route::get('/content/update-content-views/{id}', [HubCategoryContentController::class, 'updateContentViews'])->name('update-content-views');

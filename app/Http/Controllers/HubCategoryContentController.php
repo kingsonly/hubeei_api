@@ -22,13 +22,23 @@ class HubCategoryContentController extends Controller
     }
 
     // ensure that we can pull for every senario
-    public function view(HubCategoryContent $id)
+    public function view($id, Request $request)
     {
-        $model = $id;
-        if ($model) {
-            return response()->json(["status" => "success", "data" => $model], 200);
+        $headerValue = $request->header('hub');
+        if (!empty($headerValue)) {
+            $model = HubCategoryContent::where(["id" => $id])->with(["category.hub"])->first();
+
+            if ($model) {
+                if ($model->category->hub->id == $headerValue) {
+                    return response()->json(["status" => "success", "data" => $model], 200);
+                }
+                return response()->json(["status" => "error", "message" => "Content not in the same hub"], 400);
+
+            }
+
         }
-        return response()->json(["status" => "error"], 400);
+        return response()->json(["status" => "error", "message" => "Hub id is required "], 400);
+
     }
 
     public function create(Request $request)
