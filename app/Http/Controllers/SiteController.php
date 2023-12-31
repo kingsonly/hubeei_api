@@ -2,68 +2,107 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\Welcome;
-use App\Models\Hub;
+use App\Models\Hubs;
+use App\Models\HubSettings;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class SiteController extends Controller
 {
     public function register(Request $request)
     {
-        $userAuth = auth()->guard('sanctum')->user();
-        if ($userAuth) {
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|unique:users',
-                'firstname' => 'required',
-                'lastname' => 'required',
-                'password' => 'required',
-                "name" => 'required',
-                'hubDescription' => 'required',
-                'url' => 'required|unique:hub',
-            ]);
 
-            if ($validator->fails()) {
-                return response()->json(['status' => 'error', 'message' => "ensure that all required filed are properly filled "], 400);
-            }
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users',
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'password' => 'required',
+            'hubDescription' => 'required',
+            'url' => 'required|unique:hub',
+            'name' => 'required|unique:hub',
+        ]);
 
-            $user = new User();
-            $time = new \DateTime("Africa/Lagos");
-            $user->email = $request->input('email');
-            $user->password = "$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi";
-            $user->firstname = ucwords($request->input('firstname'));
-            $user->lastname = ucwords($request->input('lastname'));
-            $user->email_verified_at = $time->format("Y-m-d h:m:s");
-            $codex = substr(str_shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), -3);
-            $user->passwordresetcode = $codex . str_shuffle('1234567');
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
+        }
 
-            if ($user->save()) {
-                //create a new fee hub
-                $hub = new Hub();
-                $hub->name = $request->hubName;
-                $hub->description = $request->hubDescription;
-                $hub->url = $request->url;
-                $hub->user_id = $user->id;
-                $hub->status = 1;
+        $user = new User();
+        $time = new \DateTime("Africa/Lagos");
+        $user->email = $request->input('email');
+        $user->password = bcrypt($request->input('password'));
+        $user->name = ucwords($request->input('firstname')) . " " . ucwords($request->input('lastname'));
+        $user->email_verified_at = $time->format("Y-m-d h:m:s");
 
-                // note change the sending of email to become a queue
-                try {
-                    //$user->link = time().str_shuffle("01234567893ABCDEFGHIJKLMN01234567893ABCDEFGHIJKLMN").$user->emailresetcode;
-                    Mail::to($user->email)->send(new Welcome($user));
-                } catch (\Exception $e) {
+        if ($user->save()) {
+            //create a new fee hub
+            $hub = new Hubs();
+            $hub->name = $request->name;
+            $hub->description = $request->hubDescription;
+            $hub->url = $request->url;
+            $hub->user_id = $user->id;
+            $hub->status = 1;
 
-                    return response()->json(['status' => 'success', 'message' => "Staff created successfully", 'data' => $user], 201);
+            // note change the sending of email to become a queue
+            if ($hub->save()) {
+                $data = [
+                    [
+                        "name" => "logo",
+                        "value" => "",
+                    ],
+                    [
+                        "name" => "menu",
+                        "value" => 1,
+                    ]
+                    ,
+                    [
+                        "name" => "sportlight",
+                        "value" => 0,
+                    ]
+                    ,
+                    [
+                        "name" => "search",
+                        "value" => 1,
+                    ]
+                    ,
+                    [
+                        "name" => "content",
+                        "value" => "#ffffff",
+                    ]
+                    ,
+                    [
+                        "name" => "category",
+                        "value" => "#ffffff",
+                    ],
+                    [
+                        "name" => "backgound",
+                        "value" => "#000000",
+                    ],
+                    [
+                        "name" => "registration",
+                        "value" => 0,
+                    ],
+                    [
+                        "name" => "topten",
+                        "value" => 1,
+                    ],
+                ];
+
+                foreach ($data as $value) {
+                    $this->hubSettings($value, $hub->id);
                 }
 
-                return response()->json(['status' => 'success', 'message' => "Staff created successfully", 'data' => $user], 201);
-            } else {
-                return response()->json(['status' => 'error', 'message' => 'cannot create Staff', 'data' => $user], 400);
+                try {
+                    //Mail::to($user->email)->send(new Welcome($user));
+                    return response()->json(['status' => 'success', 'message' => " created successfully", 'data' => $user], 201);
+                } catch (\Exception $e) {
+
+                    return response()->json(['status' => 'success', 'message' => "Sorry something went wrong"], 401);
+                }
             }
         }
-        return response()->json(['status' => 'error', 'message' => 'You must be An Admin Member to use this route'], 400);
+        return response()->json(['status' => 'error', 'message' => 'Sorry something went wrong'], 400);
     }
 
     public function login(Request $request)
@@ -74,7 +113,7 @@ class SiteController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return  response()->json(["status" => "error", "data" => $validator->errors()], 400);
+            return response()->json(["status" => "error", "data" => $validator->errors()], 400);
         }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
@@ -83,7 +122,7 @@ class SiteController extends Controller
 
             return response()->json(['status' => 'success', 'message' => 'user logged in', 'data' => $authUser], 200);
         } else {
-            return  response()->json(["status" => "error", "message" => "Wrong Email or Password"], 400);
+            return response()->json(["status" => "error", "message" => "Wrong Email or Password"], 400);
         }
     }
 
@@ -94,4 +133,56 @@ class SiteController extends Controller
     public function getPaymentPlans()
     {
     }
+
+    public function dashboardCardsContent($id)
+    {
+        $model = Hubs::with(['categories' => function ($query) {
+            $query->withSum('content', 'size');
+        }])->find($id);
+
+        $totalSumOfSize = $model->categories->sum(function ($category) {
+            return $category->content_sum_size;
+        });
+
+        $totalCategories = $model->categories->count();
+
+        $totalContents = $model->categories->sum(function ($category) {
+            return $category->content->count(); // Assuming there's a content_count column
+        });
+
+        $data = [
+            [
+                "title" => "Total Categories",
+                "count" => $totalCategories,
+            ],
+
+            [
+                "title" => "Total Size",
+                "count" => $totalSumOfSize,
+            ],
+
+            [
+                "title" => "Total Contents",
+                "count" => $totalContents,
+            ],
+
+        ];
+
+        return response()->json(["status" => "success", "data" => $data], 200);
+    }
+
+    public function hubSettings($data, $hubId)
+    {
+        $model = new HubSettings();
+        $model->value = $data["value"];
+        $model->name = $data["name"];
+        $model->hub_id = $hubId;
+        $model->status = 1;
+        if ($model->save()) {
+            return true;
+        }
+        return false;
+
+    }
+
 }

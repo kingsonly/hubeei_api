@@ -11,11 +11,11 @@ class HubCategory extends Model
 
     public function hub()
     {
-        return $this->HasOne(Hub::class, "id", "hub_id");
+        return $this->HasOne(Hubs::class, "id", "hub_id");
     }
 
     public function content()
     {
-        return $this->HasMany(HubCategoryContent::class, "hub_category_id", "id");
+        return $this->HasMany(HubCategoryContent::class, "hub_category_id", "id")->orderBy('position', 'asc');
     }
 }

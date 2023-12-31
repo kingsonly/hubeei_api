@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hub_categories', function (Blueprint $table) {
+        Schema::create('content_views', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->integer("hub_id");
-            $table->integer("position")->nullable()->comment("all category should be ordered by possition");
-            $table->integer("status")->default(0);
+            $table->string("users_id")->comment("could be cockies or users_id");
+            $table->string("content_id")->comment("the liked content");
+            $table->string("users_type")->comment("either as subscriber or guest");
             $table->timestamps();
+
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hub_categories');
+        Schema::dropIfExists('content_views');
     }
 };

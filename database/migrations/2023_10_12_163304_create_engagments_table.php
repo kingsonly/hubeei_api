@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("question");
             $table->string("hub_content_id");
             $table->string("answer_type")->coment("could be multiple or single");
+            $table->integer("hub_id");
             $table->integer("status");
             $table->timestamps();
         });

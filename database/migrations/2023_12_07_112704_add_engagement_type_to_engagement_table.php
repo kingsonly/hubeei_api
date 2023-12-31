@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('engagementanswers', function (Blueprint $table) {
-            $table->id();
-            $table->string("engagment_id");
-            $table->string("user_cookies_id");
-            $table->string("option_id");
-            $table->timestamps();
+        Schema::table('engagments', function (Blueprint $table) {
+            $table->string("engagementType");
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('engagementanswers');
+
+        Schema::table('engagments', function (Blueprint $table) {
+            $table->dropColumn("engagementType");
+        });
     }
 };

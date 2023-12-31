@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('engagement_options', function (Blueprint $table) {
             $table->id();
             $table->integer("engagment_id");
-            $table->integer("answer");
+            $table->string("answer");
             $table->integer("answer_rank")->comment("to asertain if an option is a possitive or a negetive option");
             $table->integer("status");
             $table->timestamps();

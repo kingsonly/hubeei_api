@@ -26,7 +26,7 @@ class HubCategoryController extends Controller
 
     public function create(Request $request)
     {
-        // if its not a paid hub check if they have reach their max also check what remains on their max and evaluate with he content size if it does not go above the max, create the content and update user uage 
+        // if its not a paid hub check if they have reach their max also check what remains on their max and evaluate with he content size if it does not go above the max, create the content and update user uage
         $validator = Validator::make($request->all(), [
             "name" => "required",
             "hub_id" => "required",
@@ -52,7 +52,7 @@ class HubCategoryController extends Controller
                 $counter++;
             }
 
-            $getAllCategories = HubCategory::where(["hub_id" => $request->hub_id])->orderBy('position', 'asc')->get(); // order by possision
+            $getAllCategories = HubCategory::where(["hub_id" => $request->hub_id])->orderBy('position', 'asc')->with("content")->get(); // order by possision
             return response()->json(["status" => "success", "data" => $getAllCategories], 200);
         }
         return response()->json(["status" => "error"], 400);
@@ -100,4 +100,49 @@ class HubCategoryController extends Controller
 
         return response()->json(["status" => "success", 'message' => 'Category order updated successfully']);
     }
+
+    public function getCategoryWithContent($id, Request $request)
+    {
+        if ($request->header('user') != null) {
+            $headerValue = $request->header('user');
+
+            // get hub with content and category
+            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked"])->orderBy('position', 'desc')->get();
+
+            if ($models) {
+                foreach ($models as $model) {
+                    foreach ($model->content as $content) {
+
+                        if (count($content->liked) > 0) {
+                            foreach ($content->liked as $contentLike) {
+                                if ($contentLike->user_cookies_id == $headerValue) {
+                                    $content->like = true;
+                                    break;
+                                } else {
+                                    $content->like = false;
+                                }
+                            }
+
+                        } else {
+                            $content->like = 0;
+
+                        }
+
+                    }
+                }
+
+                return response()->json(["status" => "success", "data" => $models], 200);
+            }
+
+        } else {
+            $model = HubCategory::where(["hub_id" => $id])->with("content.liked")->orderBy('position', 'desc')->get();
+            if ($model) {
+                return response()->json(["status" => "success", "data" => $model], 200);
+            }
+
+        }
+
+        return response()->json(["status" => "error", "message" => "could not find a record"], 400);
+    }
+
 }

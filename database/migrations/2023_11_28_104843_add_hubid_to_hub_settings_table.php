@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hub_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
+        Schema::table('hub_settings', function (Blueprint $table) {
             $table->integer("hub_id");
-            $table->integer("position")->nullable()->comment("all category should be ordered by possition");
-            $table->integer("status")->default(0);
-            $table->timestamps();
+            $table->string("value");
         });
     }
 
@@ -26,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hub_categories');
+        Schema::table('hub_settings', function (Blueprint $table) {
+            $table->dropColumn("hub_id");
+            $table->dropColumn("value");
+        });
     }
 };
