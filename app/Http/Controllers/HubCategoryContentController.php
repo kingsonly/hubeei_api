@@ -128,9 +128,8 @@ class HubCategoryContentController extends Controller
                     "size" => $size,
                     "status" => 1,
                 ];
-                $createContent = $this->createNewContent($data);
 
-                if ($createContent) {
+                if ($createContent = $this->createNewContent($data)) {
                     return response()->json(["status" => "success", "data" => $createContent], 200);
                 }
                 return response()->json(["status" => "error"], 200);
@@ -145,9 +144,8 @@ class HubCategoryContentController extends Controller
                     "hub_category_id" => $request->hub_category_id,
                     "status" => 1,
                 ];
-                $createContent = $this->createNewContent($data);
 
-                if ($createContent) {
+                if ($createContent = $this->createNewContent($data)) {
                     return response()->json(["status" => "success", "data" => $createContent], 200);
                 }
                 return response()->json(["status" => "error"], 200);
@@ -183,9 +181,7 @@ class HubCategoryContentController extends Controller
                 "status" => 1,
             ];
 
-            $createContent = $this->createNewContent($data);
-
-            if ($createContent) {
+            if ($createContent = $this->createNewContent($data)) {
                 return response()->json(["status" => "success", "data" => $createContent], 200);
             }
             return response()->json(["status" => "error"], 200);
