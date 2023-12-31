@@ -107,8 +107,9 @@ class HubCategoryContentController extends Controller
             $file = $request->file('content');
             $thumbNail = $request->file('thumbnail');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $fileSizeInBytes = $file->getSize();
+
             if ($file->move(public_path('images/application'), $fileName)) {
-                $fileSizeInBytes = '/iimages/application/' . $fileName->getSize();
                 $fileSizeInKB = $fileSizeInBytes / 1024;
                 $fileSizeInMB = $fileSizeInKB / 1024;
                 $thumbNailFileSizeInBytes = $thumbNail->getSize();
