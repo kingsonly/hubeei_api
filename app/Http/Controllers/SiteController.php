@@ -68,20 +68,24 @@ class SiteController extends Controller
                     ,
                     [
                         "name" => "content",
-                        "value" => "#000",
+                        "value" => "#ffffff",
                     ]
                     ,
                     [
                         "name" => "category",
-                        "value" => "#000",
+                        "value" => "#ffffff",
                     ],
                     [
                         "name" => "backgound",
-                        "value" => "#000",
+                        "value" => "#000000",
                     ],
                     [
                         "name" => "registration",
                         "value" => 0,
+                    ],
+                    [
+                        "name" => "topten",
+                        "value" => 1,
                     ],
                 ];
 

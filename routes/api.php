@@ -4,6 +4,7 @@ use App\Http\Controllers\HubCategoryContentController;
 use App\Http\Controllers\HubCategoryController;
 use App\Http\Controllers\HubController;
 use App\Http\Controllers\HubSettingsController;
+use App\Http\Controllers\HubSubscriptionController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,11 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::post('/register', [SiteController::class, 'register'])->name('register');
+Route::get('content/engagmet-view/{id}', [HubCategoryContentController::class, 'getEngagementContentUsers'])->name('engagmet-view');
+Route::post('/content/save-views', [HubCategoryContentController::class, 'saveViews'])->name('save-views');
 Route::post('/login', [SiteController::class, 'login'])->name('login');
+Route::post('/subscription/register', [HubSubscriptionController::class, 'registration'])->name('subscription-register');
+Route::post('/subscription/login', [HubSubscriptionController::class, 'login'])->name('subscription-login');
 Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('users-hub');
 Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');

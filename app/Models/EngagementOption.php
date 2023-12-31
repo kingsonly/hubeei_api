@@ -11,7 +11,7 @@ class EngagementOption extends Model
 
     public function answers()
     {
-        return $this->HasMany(Engagementanswers::class, "users_answers", "id");
+        return $this->HasMany(Engagementanswers::class, "option_id", "id");
     }
 
 }

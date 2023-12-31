@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContentViews;
 use App\Models\EngagementOption;
 use App\Models\Engagment;
 use App\Models\HubCategoryContent;
@@ -270,9 +271,9 @@ class HubCategoryContentController extends Controller
         $userLikedContent = UserLikedContent::where(["user_cookies_id" => $id])->with(["content.category"])->get(); // Replace $userId with the user's ID you want to fetch liked content for.
 
         $likedContentByCategory = $userLikedContent // Assuming you have defined the "likedContent" relationship in your User model.
-        ->map(function ($likedContent) {
-            return $likedContent->content->load('category');
-        });
+            ->map(function ($likedContent) {
+                return $likedContent->content->load('category');
+            });
         return response()->json(["status" => "success", "data" => $likedContentByCategory], 200);
     }
 
@@ -369,8 +370,27 @@ class HubCategoryContentController extends Controller
         }
     }
 
-    public function saveViews()
+    public function saveViews(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'content_id' => 'required',
+            'user_type' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(["status" => "error", "data" => $validator->errors()], 400);
+        }
+
+        $model = new ContentViews();
+        $model->users_id = $request->user_id;
+        $model->content_id = $request->content_id;
+        $model->users_type = $request->user_type;
+        $model->created_at = time();
+        if ($model->save()) {
+            return response()->json(["status" => "success", "data" => $model], 200);
+        }
+
     }
 
     public function changeContentPosition(Request $request)
@@ -410,11 +430,20 @@ class HubCategoryContentController extends Controller
 
     public function updateContentViews($id)
     {
-        $model = HubCategoryContent::where(['id' => $id]);
-        if ($model->update(['view' => $model->view + 1])) {
-            return response()->json(["status" => "success", 'message' => 'number of views has been updated']);
+        $model = ContentViews::where(["id" => $id])->first();
+        if ($model) {
+            $model->updated_at = time();
+            if ($model->save()) {
+                return response()->json(["status" => "success"], 200);
+            } else {
+                return response()->json(["status" => "error", "message" => "Could not update view"], 400);
+
+            }
+
+        } else {
+            return response()->json(["status" => "error", "message" => "there is no view with the provided id"], 400);
+
         }
-        return response()->json(["status" => "error", 'message' => 'could not update  views']);
 
     }
 
@@ -471,17 +500,34 @@ class HubCategoryContentController extends Controller
 
     }
 
-    public function getEngagementContentUsers($id)
+    public function getEngagementContentUsers($id, Request $request)
     {
-        // the id here is the content id // please take note.
-        $model = Engagment::where(["hub_content_id" => $id])->with(["options.answers"])->get();
-        // we can instantly get the engagment count for each answer
+        $userCookiesId = $request->header('user');
+
+        $engagments = Engagment::with(['options', 'answers', 'userAnswer' => function ($query) use ($userCookiesId) {
+            $query->where('user_cookies_id', $userCookiesId);
+        }])->where(["hub_content_id" => $id])->get();
+
+        foreach ($engagments as $key => $engagment) {
+            $engagments[$key]["stats"] = $engagment->optionAnswerCounts();
+
+            // Use $optionAnswerCounts as needed
+        }
+        return response()->json(["status" => "success", "data" => $engagments], 200);
 
     }
 
-    public function getEngagementContentHub()
+    public function respondToEngagment($id, Request $request)
     {
-
+        $answers = json_decode($request->answers);
+        foreach ($answers as $value) {
+            $model = new Engagementanswers();
+            $model->engagment_id = $value["engagment_id"];
+            $model->user_cookies_id = $id;
+            $model->option_id = $value["option_id"];
+            $model->save();
+        }
+        return response()->json(["status" => "success"], 200);
     }
 
 }

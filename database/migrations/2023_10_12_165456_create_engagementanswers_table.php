@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('engagementanswers', function (Blueprint $table) {
             $table->id();
-            $table->string("engagment_option_id");
+            $table->string("engagment_id");
             $table->string("user_cookies_id");
-            $table->string("users_answers");
+            $table->string("option_id");
             $table->timestamps();
         });
     }
