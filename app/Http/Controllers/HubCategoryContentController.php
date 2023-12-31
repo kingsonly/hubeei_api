@@ -49,9 +49,6 @@ class HubCategoryContentController extends Controller
             case "engagement":
                 $this->createEngagement($request);
                 break;
-            case "video":
-                $this->uploadOtherFiles($request);
-                break;
             default:
                 $this->uploadOtherFiles($request);
                 break;
@@ -111,10 +108,9 @@ class HubCategoryContentController extends Controller
             $thumbNail = $request->file('thumbnail');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             if ($file->move(public_path('images/application'), $fileName)) {
-                $fileSizeInBytes = $file->getSize();
+                $fileSizeInBytes = '/iimages/application/' . $fileName->getSize();
                 $fileSizeInKB = $fileSizeInBytes / 1024;
                 $fileSizeInMB = $fileSizeInKB / 1024;
-
                 $thumbNailFileSizeInBytes = $thumbNail->getSize();
                 $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
                 $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
