@@ -128,8 +128,13 @@ class HubCategoryContentController extends Controller
                     "size" => $size,
                     "status" => 1,
                 ];
+                $createContent = $this->createNewContent($data);
 
-                $this->createNewContent($data);
+                if ($createContent) {
+                    return response()->json(["status" => "success", "data" => $createContent], 200);
+                }
+                return response()->json(["status" => "error"], 200);
+
             } else {
                 $data = [
                     "name" => $request->name,
@@ -140,7 +145,13 @@ class HubCategoryContentController extends Controller
                     "hub_category_id" => $request->hub_category_id,
                     "status" => 1,
                 ];
-                $this->createNewContent($data);
+                $createContent = $this->createNewContent($data);
+
+                if ($createContent) {
+                    return response()->json(["status" => "success", "data" => $createContent], 200);
+                }
+                return response()->json(["status" => "error"], 200);
+
             }
 
             //$file->move(public_path('images/application'), $fileName);
@@ -172,7 +183,12 @@ class HubCategoryContentController extends Controller
                 "status" => 1,
             ];
 
-            $this->createNewContent($data);
+            $createContent = $this->createNewContent($data);
+
+            if ($createContent) {
+                return response()->json(["status" => "success", "data" => $createContent], 200);
+            }
+            return response()->json(["status" => "error"], 200);
 
             //$file->move(public_path('images/application'), $fileName);
 
