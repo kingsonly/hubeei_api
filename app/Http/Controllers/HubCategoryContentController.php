@@ -271,8 +271,11 @@ class HubCategoryContentController extends Controller
 
             //$getAllCategories = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('position', 'asc')->get(); // order by possision
             return $model;
+        } else {
+            return false;
+
         }
-        return false;
+
     }
 
     public function getLikedContent($id)
