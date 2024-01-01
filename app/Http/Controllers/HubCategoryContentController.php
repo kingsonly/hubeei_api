@@ -257,19 +257,18 @@ class HubCategoryContentController extends Controller
         $model->status = $data["status"];
         $model->size = $data["size"];
         if ($model->save()) {
-            $getAllCategoriesContent = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('id', 'desc')->get();
-            $counter = 1;
-            foreach ($getAllCategoriesContent as $value) {
-                if ($counter == 1) {
-                    $value->position = $counter;
-                } else {
-                    $value->position += 1;
-                }
-                $value->save();
-                $counter++;
-            }
+            // $getAllCategoriesContent = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('id', 'desc')->get();
+            // $counter = 1;
+            // foreach ($getAllCategoriesContent as $value) {
+            //     if ($counter == 1) {
+            //         $value->position = $counter;
+            //     } else {
+            //         $value->position += 1;
+            //     }
+            //     $value->save();
+            //     $counter++;
+            // }
 
-            //$getAllCategories = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('position', 'asc')->get(); // order by possision
             return $model;
         } else {
             return false;
