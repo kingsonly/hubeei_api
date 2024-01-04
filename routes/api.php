@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [SiteController::class, 'register'])->name('register');
 Route::get('content/engagmet-view/{id}', [HubCategoryContentController::class, 'getEngagementContentUsers'])->name('engagmet-view');
+Route::get('content/respond-to-engagment/{id}', [HubCategoryContentController::class, 'respondToEngagment'])->name('respond-to-engagment');
 Route::post('/content/save-views', [HubCategoryContentController::class, 'saveViews'])->name('save-views');
 Route::post('/login', [SiteController::class, 'login'])->name('login');
 Route::post('/subscription/register', [HubSubscriptionController::class, 'registration'])->name('subscription-register');

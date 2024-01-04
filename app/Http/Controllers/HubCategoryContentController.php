@@ -47,10 +47,10 @@ class HubCategoryContentController extends Controller
         // note every item created should save have size counter and the size wouild be used to determine if a free account can add more content or not .
         switch ($request->content_type) {
             case "engagement":
-                $this->createEngagement($request);
+                return $this->createEngagement($request);
                 break;
             default:
-                $this->uploadOtherFiles($request);
+                return $this->uploadOtherFiles($request);
                 break;
         }
     }
