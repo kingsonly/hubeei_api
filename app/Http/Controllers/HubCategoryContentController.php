@@ -355,7 +355,7 @@ class HubCategoryContentController extends Controller
                 foreach ($engagmentData as $value) {
                     $model->question = $value->question;
                     $model->hub_content_id = $content->id;
-                    $model->engagementType = $value->engagementType;
+                    $model->engagement_type = $value->engagementType;
                     $model->answer_type = $value->optionType;
                     $model->status = 1;
                     if ($model->save()) {
