@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContentViews;
+use App\Models\Engagementanswers;
 use App\Models\EngagementOption;
 use App\Models\Engagment;
 use App\Models\HubCategoryContent;
@@ -530,12 +531,13 @@ class HubCategoryContentController extends Controller
 
     public function respondToEngagment($id, Request $request)
     {
+
         $answers = json_decode($request->answers);
         foreach ($answers as $value) {
             $model = new Engagementanswers();
-            $model->engagment_id = $value["engagment_id"];
+            $model->engagment_id = $value->engagment_id;
             $model->user_cookies_id = $id;
-            $model->option_id = $value["option_id"];
+            $model->option_id = $value->option_id;
             $model->save();
         }
         return response()->json(["status" => "success"], 200);
