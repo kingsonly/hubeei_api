@@ -12,7 +12,6 @@ use App\Models\UserLikedContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Vimeo\Laravel\Vimeo;
 
 class HubCategoryContentController extends Controller
 {
@@ -175,8 +174,8 @@ class HubCategoryContentController extends Controller
             $sizeInMB = $sizeInBytes / (1024 * 1024);
 
             $thumbNailFileSizeInBytes = $thumbNail->getSize();
-            $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
-            $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
+            $thumbNailFileSizeInKB = $thumbNailFileSizeInBytes / 1024;
+            $thumbNailFileSizeInMB = $thumbNailFileSizeInKB / 1024;
 
             $size = $thumbNailFileSizeInMB + $sizeInMB;
 
@@ -226,7 +225,7 @@ class HubCategoryContentController extends Controller
         }
     }
 
-    public function uploadVideo(Request $request, Vimeo $vimeo)
+    public function uploadVideo(Request $request, $vimeo)
     {
         // Check if a file was uploaded
         if ($request->hasFile('video')) {
