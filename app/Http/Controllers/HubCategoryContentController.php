@@ -104,6 +104,8 @@ class HubCategoryContentController extends Controller
 
     public function uploadOtherFiles(Request $request)
     {
+        $engagmentModel = new Engagment();
+
         if ($request->content_type == "video" or $request->content_type == "audio" or $request->content_type == "pdf") {
             $file = $request->file('content');
             $thumbNail = $request->file('thumbnail');
@@ -131,6 +133,13 @@ class HubCategoryContentController extends Controller
                 ];
 
                 if ($createContent = $this->createNewContent($data)) {
+                    if ($request->with_engagement == 1) {
+                        $engagmentData = json_decode($request->input("engagment_data"));
+
+                        $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
+
+                    }
+
                     return response()->json(["status" => "success", "data" => $createContent], 200);
                 }
                 return response()->json(["status" => "error"], 200);
@@ -157,6 +166,7 @@ class HubCategoryContentController extends Controller
 
             //$resultDocument->file_path = '/images/application/' . $fileName;
         }
+
         if ($request->content_type == "link") {
             $file = $request->content;
             $thumbNail = $request->file('thumbnail');
@@ -183,6 +193,13 @@ class HubCategoryContentController extends Controller
             ];
 
             if ($createContent = $this->createNewContent($data)) {
+                if ($request->with_engagement == 1) {
+                    $engagmentData = json_decode($request->input("engagment_data"));
+
+                    $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
+
+                }
+
                 return response()->json(["status" => "success", "data" => $createContent], 200);
             }
             return response()->json(["status" => "error"], 200);
@@ -353,24 +370,9 @@ class HubCategoryContentController extends Controller
         DB::beginTransaction();
         try {
             if ($content = $this->createNewContent($data)) {
-                foreach ($engagmentData as $value) {
-                    $model->question = $value->question;
-                    $model->hub_content_id = $content->id;
-                    $model->engagement_type = $value->engagementType;
-                    $model->answer_type = $value->optionType;
-                    $model->status = 1;
-                    if ($model->save()) {
-                        // save answers too
-                        $optionModel = new EngagementOption();
-                        foreach ($value->answers as $answers) {
-                            $optionModel->engagment_id = $model->id;
-                            $optionModel->answer = $answers->answer;
-                            $optionModel->answer_rank = $answers->status;
-                            $optionModel->status = 1;
-                            $optionModel->save();
-                        }
-                    }
-                }
+                $this->createActualEngagement($content, $model, $engagmentData);
+                DB::commit();
+
                 return response()->json(["status" => "success"], 200);
 
             }
@@ -380,6 +382,29 @@ class HubCategoryContentController extends Controller
             DB::rollBack();
             return response()->json(["status" => "error", "message" => "Something whent wrong, Please try again later", "data" => $e], 400);
         }
+    }
+
+    private function createActualEngagement($content, $model, $engagmentData)
+    {
+        foreach ($engagmentData as $value) {
+            $model->question = $value->question;
+            $model->hub_content_id = $content->id;
+            $model->engagement_type = $value->engagementType;
+            $model->answer_type = $value->optionType;
+            $model->status = 1;
+            if ($model->save()) {
+                // save answers too
+                $optionModel = new EngagementOption();
+                foreach ($value->answers as $answers) {
+                    $optionModel->engagment_id = $model->id;
+                    $optionModel->answer = $answers->answer;
+                    $optionModel->answer_rank = $answers->status;
+                    $optionModel->status = 1;
+                    $optionModel->save();
+                }
+            }
+        }
+
     }
 
     public function saveViews(Request $request)
