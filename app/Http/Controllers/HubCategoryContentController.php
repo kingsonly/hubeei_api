@@ -45,13 +45,23 @@ class HubCategoryContentController extends Controller
     public function create(Request $request)
     {
         // note every item created should save have size counter and the size wouild be used to determine if a free account can add more content or not .
-        switch ($request->content_type) {
-            case "engagement":
-                return $this->createEngagement($request);
-                break;
-            default:
-                return $this->uploadOtherFiles($request);
-                break;
+        DB::beginTransaction();
+        try {
+            switch ($request->content_type) {
+                case "engagement":
+                    DB::commit();
+                    return $this->createEngagement($request);
+                    break;
+                default:
+                    DB::commit();
+                    return $this->uploadOtherFiles($request);
+                    break;
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception("Something went wrong.");
+
         }
     }
 
@@ -128,6 +138,7 @@ class HubCategoryContentController extends Controller
                     "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
                     "size" => $size,
+                    "with_engagement" => $request->engagment_data,
                     "status" => 1,
                 ];
 
