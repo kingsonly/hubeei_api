@@ -288,7 +288,7 @@ class HubCategoryContentController extends Controller
         $model->hub_category_id = $data["hub_category_id"];
         $model->status = $data["status"];
         $model->size = $data["size"];
-        $model->sportligh = $data["sportlight"];
+        $model->sportlight = $data["sportlight"];
         $model->with_engagement = $data["with_engagement"];
         if ($model->save()) {
             // $getAllCategoriesContent = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('id', 'desc')->get();
