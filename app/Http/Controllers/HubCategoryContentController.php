@@ -60,7 +60,7 @@ class HubCategoryContentController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            throw new \Exception("Something went wrong.");
+            throw new \Exception($e);
 
         }
     }
@@ -155,13 +155,16 @@ class HubCategoryContentController extends Controller
                 return response()->json(["status" => "error"], 200);
 
             } else {
+
                 $data = [
                     "name" => $request->name,
                     "content_type" => $request->content_type,
                     "content_description" => $request->content_description,
-                    "content" => $request->content,
+                    "content" => '/images/application/' . $fileName,
                     "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" => $request->hub_category_id,
+                    "sportlight" => $request->sportlight,
+                    "with_engagement" => $request->engagment_data,
                     "status" => 1,
                 ];
 
@@ -198,6 +201,7 @@ class HubCategoryContentController extends Controller
                 "thumbnail" => $this->uploadThumbnail($request),
                 "hub_category_id" => $request->hub_category_id,
                 "sportlight" => $request->sportlight,
+                "with_engagement" => $request->engagment_data,
                 "size" => $size,
                 "status" => 1,
             ];
