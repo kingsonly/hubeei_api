@@ -138,7 +138,7 @@ class HubCategoryContentController extends Controller
                     "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
                     "size" => $size,
-                    "with_engagement" => $request->engagment_data,
+                    "with_engagement" => $request->with_engagement,
                     "status" => 1,
                 ];
 
@@ -164,7 +164,7 @@ class HubCategoryContentController extends Controller
                     "thumbnail" => $this->uploadThumbnail($request),
                     "hub_category_id" => $request->hub_category_id,
                     "sportlight" => $request->sportlight,
-                    "with_engagement" => $request->engagment_data,
+                    "with_engagement" => $request->with_engagement,
                     "status" => 1,
                 ];
 
@@ -201,7 +201,7 @@ class HubCategoryContentController extends Controller
                 "thumbnail" => $this->uploadThumbnail($request),
                 "hub_category_id" => $request->hub_category_id,
                 "sportlight" => $request->sportlight,
-                "with_engagement" => $request->engagment_data,
+                "with_engagement" => $request->with_engagement,
                 "size" => $size,
                 "status" => 1,
             ];
