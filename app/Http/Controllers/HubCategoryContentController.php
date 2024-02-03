@@ -284,6 +284,8 @@ class HubCategoryContentController extends Controller
         $model->hub_category_id = $data["hub_category_id"];
         $model->status = $data["status"];
         $model->size = $data["size"];
+        $model->sportligh = $data["sportlight"];
+        $model->with_engagement = $data["with_engagement"];
         if ($model->save()) {
             // $getAllCategoriesContent = HubCategoryContent::where(["hub_category_id" => $data['hub_category_id']])->orderBy('id', 'desc')->get();
             // $counter = 1;
@@ -404,8 +406,9 @@ class HubCategoryContentController extends Controller
             $model->status = 1;
             if ($model->save()) {
                 // save answers too
-                $optionModel = new EngagementOption();
+
                 foreach ($value->answers as $answers) {
+                    $optionModel = new EngagementOption();
                     $optionModel->engagment_id = $model->id;
                     $optionModel->answer = $answers->answer;
                     $optionModel->answer_rank = $answers->status;
