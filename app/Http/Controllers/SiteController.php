@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreateHubRegistrationSettings;
 use App\Models\Hubs;
 use App\Models\HubSettings;
 use App\Models\User;
@@ -182,6 +183,48 @@ class SiteController extends Controller
             return true;
         }
         return false;
+
+    }
+    public function hubRegistrationSettings(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'hub_id' => 'required',
+            'structure' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => "error", "message" => "Validation failed", "data" => $validator->errors()], 400);
+
+        }
+        if (!CreateHubRegistrationSettings::where(["hub_id" => $request->hub_id])->first()) {
+            $model = new CreateHubRegistrationSettings();
+            $model->create($request->all());
+            return response()->json(['status' => "success"], 200);
+        } else {
+            return response()->json(['status' => "error", "message" => "this hub already have a settings"], 400);
+
+        }
+
+    }
+
+    public function getHubRegistrationSettings($id)
+    {
+        $model = CreateHubRegistrationSettings::findOrFail($id);
+        return response()->json(['status' => "success", "data" => $model], 200);
+
+    }
+
+    public function updateHubRegistrationSettings($id, Request $request)
+    {
+        $model = CreateHubRegistrationSettings::findOrFail($id);
+        if ($model) {
+            if ($model->update($request->all())) {
+                return response()->json(['status' => "success", "message" => "created successfuly"], 200);
+            }
+
+            return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
+
+        }
+        return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
 
     }
 

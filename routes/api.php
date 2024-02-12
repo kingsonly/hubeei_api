@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
+Route::post('/register-settings-update', [SiteController::class, 'updateHubRegistrationSettings'])->name('updateHubRegistrationSettings');
+Route::get('/register-settings-view/{id}', [SiteController::class, 'getHubRegistrationSettings'])->name('getHubRegistrationSettings');
+Route::post('/register-settings-create', [SiteController::class, 'hubRegistrationSettings'])->name('hubRegistrationSettings');
 Route::post('/register', [SiteController::class, 'register'])->name('register');
 Route::get('content/engagmet-view/{id}', [HubCategoryContentController::class, 'getEngagementContentUsers'])->name('engagmet-view');
 Route::post('content/respond-to-engagment/{id}', [HubCategoryContentController::class, 'respondToEngagment'])->name('respond-to-engagment');
