@@ -34,12 +34,9 @@ class HubCategoryContentController extends Controller
                     return response()->json(["status" => "success", "data" => $model], 200);
                 }
                 return response()->json(["status" => "error", "message" => "Content not in the same hub"], 400);
-
             }
-
         }
         return response()->json(["status" => "error", "message" => "Hub id is required "], 400);
-
     }
 
     public function create(Request $request)
@@ -57,11 +54,9 @@ class HubCategoryContentController extends Controller
                     return $this->uploadOtherFiles($request);
                     break;
             }
-
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e);
-
         }
     }
 
@@ -87,7 +82,6 @@ class HubCategoryContentController extends Controller
 
         if ($request->input("content") != null) {
             $model->content = $request->input("content");
-
         }
 
         $model->name = $request->name;
@@ -99,7 +93,6 @@ class HubCategoryContentController extends Controller
             return response()->json(["status" => "success"], 200);
         }
         return response()->json(["status" => "error"], 400);
-
     }
 
     public function delete(HubCategoryContent $id)
@@ -123,10 +116,10 @@ class HubCategoryContentController extends Controller
 
             if ($file->move(public_path('images/application'), $fileName)) {
                 $fileSizeInKB = $fileSizeInBytes / 1024;
-                $fileSizeInMB = $fileSizeInKB / 1024;
+                $fileSizeInMB = ($fileSizeInKB / 1024) / 1024;
                 $thumbNailFileSizeInBytes = $thumbNail->getSize();
                 $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
-                $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
+                $thumbNailFileSizeInMB = ($fileSizeInKB / 1024) / 1024;
                 $size = $thumbNailFileSizeInMB + $fileSizeInMB;
 
                 $data = [
@@ -147,13 +140,11 @@ class HubCategoryContentController extends Controller
                         $engagmentData = json_decode($request->input("engagment_data"));
 
                         $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
-
                     }
 
                     return response()->json(["status" => "success", "data" => $createContent], 200);
                 }
                 return response()->json(["status" => "error"], 200);
-
             } else {
 
                 $data = [
@@ -172,7 +163,6 @@ class HubCategoryContentController extends Controller
                     return response()->json(["status" => "success", "data" => $createContent], 200);
                 }
                 return response()->json(["status" => "error"], 200);
-
             }
 
             //$file->move(public_path('images/application'), $fileName);
@@ -185,11 +175,11 @@ class HubCategoryContentController extends Controller
             $thumbNail = $request->file('thumbnail');
 
             $sizeInBytes = mb_strlen($file, '8bit');
-            $sizeInMB = $sizeInBytes / (1024 * 1024);
+            $sizeInMB = ($sizeInBytes / (1024 * 1024)) / 1024;
 
             $thumbNailFileSizeInBytes = $thumbNail->getSize();
             $thumbNailFileSizeInKB = $thumbNailFileSizeInBytes / 1024;
-            $thumbNailFileSizeInMB = $thumbNailFileSizeInKB / 1024;
+            $thumbNailFileSizeInMB = ($thumbNailFileSizeInKB / 1024) / 1024;
 
             $size = $thumbNailFileSizeInMB + $sizeInMB;
 
@@ -211,7 +201,6 @@ class HubCategoryContentController extends Controller
                     $engagmentData = json_decode($request->input("engagment_data"));
 
                     $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
-
                 }
 
                 return response()->json(["status" => "success", "data" => $createContent], 200);
@@ -222,7 +211,6 @@ class HubCategoryContentController extends Controller
 
             //$resultDocument->file_path = '/images/application/' . $fileName;
         }
-
     }
 
     // create a function for uploading thumbnail
@@ -306,9 +294,7 @@ class HubCategoryContentController extends Controller
             return $model;
         } else {
             return false;
-
         }
-
     }
 
     public function getLikedContent($id)
@@ -331,19 +317,15 @@ class HubCategoryContentController extends Controller
                 ->orWhere('content_description', 'like', '%' . $data . '%')
                 ->orWhere('content_type', 'like', '%' . $data . '%')
                 ->orderBy('position', 'desc');
-
         }])->find($id);
 
         // Access the contents
         $contents = $hub->categories;
         if (count($contents) > 0) {
             return response()->json(["status" => "success", 'data' => $contents]);
-
         } else {
             return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
-
         }
-
     }
 
     public function createEngagement(Request $request)
@@ -390,7 +372,6 @@ class HubCategoryContentController extends Controller
                 DB::commit();
 
                 return response()->json(["status" => "success"], 200);
-
             }
 
             return response()->json(["status" => "error"], 400);
@@ -421,7 +402,6 @@ class HubCategoryContentController extends Controller
                 }
             }
         }
-
     }
 
     public function saveViews(Request $request)
@@ -444,7 +424,6 @@ class HubCategoryContentController extends Controller
         if ($model->save()) {
             return response()->json(["status" => "success", "data" => $model], 200);
         }
-
     }
 
     public function changeContentPosition(Request $request)
@@ -457,7 +436,6 @@ class HubCategoryContentController extends Controller
                 HubCategoryContent::where(['id' => $content["id"]])->update(['position' => $position, "hub_category_id" => $value["id"]]);
                 $position++;
             }
-
         }
 
         return response()->json(["status" => "success", 'message' => 'Content order updated successfully']);
@@ -474,12 +452,9 @@ class HubCategoryContentController extends Controller
         $contents = $hub->categories->flatMap->content;
         if (count($contents) > 0) {
             return response()->json(["status" => "success", 'data' => $contents]);
-
         } else {
             return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
-
         }
-
     }
 
     public function updateContentViews($id)
@@ -491,14 +466,10 @@ class HubCategoryContentController extends Controller
                 return response()->json(["status" => "success"], 200);
             } else {
                 return response()->json(["status" => "error", "message" => "Could not update view"], 400);
-
             }
-
         } else {
             return response()->json(["status" => "error", "message" => "there is no view with the provided id"], 400);
-
         }
-
     }
 
     public function getTopTenViews($id)
@@ -520,12 +491,9 @@ class HubCategoryContentController extends Controller
 
         if (count($contents) > 0) {
             return response()->json(["status" => "success", 'data' => $contents]);
-
         } else {
             return response()->json(["status" => "error", 'message' => "there are no sportlight contents at the moment "]);
-
         }
-
     }
 
     public function likeUnlike($id, Request $request)
@@ -547,11 +515,9 @@ class HubCategoryContentController extends Controller
                 }
             }
             return response()->json(["status" => "error", "message" => "Something went wrong"], 400);
-
         } else {
             return response()->json(["status" => "error", "message" => "user header is required"], 400);
         }
-
     }
 
     public function getEngagementContentUsers($id, Request $request)
@@ -568,7 +534,6 @@ class HubCategoryContentController extends Controller
             // Use $optionAnswerCounts as needed
         }
         return response()->json(["status" => "success", "data" => $engagments], 200);
-
     }
 
     public function respondToEngagment($id, Request $request)
@@ -584,5 +549,4 @@ class HubCategoryContentController extends Controller
         }
         return response()->json(["status" => "success"], 200);
     }
-
 }
