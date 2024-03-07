@@ -55,23 +55,19 @@ class SiteController extends Controller
                     [
                         "name" => "menu",
                         "value" => 1,
-                    ]
-                    ,
+                    ],
                     [
                         "name" => "sportlight",
                         "value" => 0,
-                    ]
-                    ,
+                    ],
                     [
                         "name" => "search",
                         "value" => 1,
-                    ]
-                    ,
+                    ],
                     [
                         "name" => "content",
                         "value" => "#ffffff",
-                    ]
-                    ,
+                    ],
                     [
                         "name" => "category",
                         "value" => "#ffffff",
@@ -135,6 +131,35 @@ class SiteController extends Controller
     {
     }
 
+    /**
+     * formatSizeUnits function
+     *
+     * this function is use to display a human readable size
+     * 
+     * @param [type] $bytes
+     * @return void
+     */
+    private function  formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1099511627776) {
+            $size = number_format($bytes / 1099511627776, 2) . ' TB';
+        } elseif ($bytes >= 1073741824) {
+            $size = number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $size = number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $size = number_format($bytes / 1024, 2) . ' KB';
+        } elseif ($bytes > 1) {
+            $size = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $size = $bytes . ' byte';
+        } else {
+            $size = '0 bytes';
+        }
+
+        return $size;
+    }
+
     public function dashboardCardsContent($id)
     {
         $model = Hubs::with(['categories' => function ($query) {
@@ -159,7 +184,7 @@ class SiteController extends Controller
 
             [
                 "title" => "Total Size",
-                "count" => $totalSumOfSize,
+                "count" => $this->formatSizeUnits($totalSumOfSize),
             ],
 
             [
@@ -183,7 +208,6 @@ class SiteController extends Controller
             return true;
         }
         return false;
-
     }
     public function hubRegistrationSettings(Request $request)
     {
@@ -193,7 +217,6 @@ class SiteController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json(['status' => "error", "message" => "Validation failed", "data" => $validator->errors()], 400);
-
         }
         if (!CreateHubRegistrationSettings::where(["hub_id" => $request->hub_id])->first()) {
             $model = new CreateHubRegistrationSettings();
@@ -201,16 +224,13 @@ class SiteController extends Controller
             return response()->json(['status' => "success"], 200);
         } else {
             return response()->json(['status' => "error", "message" => "this hub already have a settings"], 400);
-
         }
-
     }
 
     public function getHubRegistrationSettings($id)
     {
         $model = CreateHubRegistrationSettings::findOrFail($id);
         return response()->json(['status' => "success", "data" => $model], 200);
-
     }
 
     public function updateHubRegistrationSettings($id, Request $request)
@@ -222,10 +242,7 @@ class SiteController extends Controller
             }
 
             return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
-
         }
         return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
-
     }
-
 }

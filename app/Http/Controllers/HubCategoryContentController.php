@@ -104,6 +104,7 @@ class HubCategoryContentController extends Controller
         return response()->json(["status" => "serror"], 400);
     }
 
+
     public function uploadOtherFiles(Request $request)
     {
         $engagmentModel = new Engagment();
@@ -116,11 +117,12 @@ class HubCategoryContentController extends Controller
 
             if ($file->move(public_path('images/application'), $fileName)) {
                 $fileSizeInKB = $fileSizeInBytes / 1024;
-                $fileSizeInMB = ($fileSizeInKB / 1024) / 1024;
+                $fileSizeInMB = $fileSizeInKB / 1024;
                 $thumbNailFileSizeInBytes = $thumbNail->getSize();
                 $thumbNailFileSizeInKB = $fileSizeInBytes / 1024;
-                $thumbNailFileSizeInMB = ($fileSizeInKB / 1024) / 1024;
-                $size = $thumbNailFileSizeInMB + $fileSizeInMB;
+                $thumbNailFileSizeInMB = $fileSizeInKB / 1024;
+                //$size = $thumbNailFileSizeInMB + $fileSizeInMB;
+                $size = $thumbNailFileSizeInBytes + $fileSizeInBytes;
 
                 $data = [
                     "name" => $request->name,
@@ -175,13 +177,14 @@ class HubCategoryContentController extends Controller
             $thumbNail = $request->file('thumbnail');
 
             $sizeInBytes = mb_strlen($file, '8bit');
-            $sizeInMB = ($sizeInBytes / (1024 * 1024)) / 1024;
+            $sizeInMB = $sizeInBytes / (1024 * 1024);
 
             $thumbNailFileSizeInBytes = $thumbNail->getSize();
             $thumbNailFileSizeInKB = $thumbNailFileSizeInBytes / 1024;
-            $thumbNailFileSizeInMB = ($thumbNailFileSizeInKB / 1024) / 1024;
+            $thumbNailFileSizeInMB = $thumbNailFileSizeInKB / 1024;
 
-            $size = $thumbNailFileSizeInMB + $sizeInMB;
+            //$size = $thumbNailFileSizeInMB + $sizeInMB;
+            $size = $thumbNailFileSizeInBytes + $sizeInBytes;
 
             $data = [
                 "name" => $request->name,
@@ -351,7 +354,8 @@ class HubCategoryContentController extends Controller
         $thumbNailFileSizeInKB = $thumbNailFileSizeInBytes / 1024;
         $thumbNailFileSizeInMB = $thumbNailFileSizeInKB / 1024;
 
-        $size = $thumbNailFileSizeInMB + $sizeInMB;
+        //$size = $thumbNailFileSizeInMB + $sizeInMB;
+        $size = $thumbNailFileSizeInBytes + $sizeInBytes;
 
         $data = [
             "name" => $request->name,
