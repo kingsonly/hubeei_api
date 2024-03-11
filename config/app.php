@@ -168,6 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        'Intervention\Image\ImageServiceProvider',
         //Atymic\Twitter\ServiceProvider\LaravelServiceProvider::class,
     ])->toArray(),
 
@@ -185,6 +186,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         //'Twitter' => Atymic\Twitter\Facade\Twitter::class,
+        'Image' => 'Intervention\Image\Facades\Image',
     ])->toArray(),
 
 ];

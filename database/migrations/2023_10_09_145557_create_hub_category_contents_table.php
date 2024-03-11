@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string("content_type");
             $table->string("content_description");
             $table->string("content");
-            $table->string("thumbnail");
+            $table->string("thumbnail")->nullable();
             $table->integer("sportlight")->default(0);
             $table->integer("views")->default(0);
             $table->integer("with_engagement")->default(0);

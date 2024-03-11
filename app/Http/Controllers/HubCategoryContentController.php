@@ -12,6 +12,8 @@ use App\Models\UserLikedContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Image as SpecialImage;
+
 
 class HubCategoryContentController extends Controller
 {
@@ -41,7 +43,22 @@ class HubCategoryContentController extends Controller
 
     public function create(Request $request)
     {
-        // note every item created should save have size counter and the size wouild be used to determine if a free account can add more content or not .
+        //validate request here
+        $validator = Validator::make($request->all(), [
+            "name" => 'required|string',
+            "content_type" => 'required|string',
+            "content_description" => 'required|string',
+            "content" => 'required|string',
+            "thumbnail" => 'sometimes|string',
+            "sportlight" => 'required',
+            "with_engagement" => 'required',
+            "hub_category_id" => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()], 400);
+        }
+        // note every item created should save have size counter and the size would be used to determine if a free account can add more content or not .
         DB::beginTransaction();
         try {
             switch ($request->content_type) {
@@ -225,8 +242,24 @@ class HubCategoryContentController extends Controller
     public function uploadThumbnail($request)
     {
         $file = $request->file('thumbnail');
+        if ($file == null) {
+            return '/images/thumbnail/hubieelogo.jpg';
+        }
         $fileName = time() . '.' . $file->getClientOriginalExtension();
+        // convert thumbnail for all card size on the hub page 
+        $container1Image = SpecialImage::make($file)->resize(300, 200)->encode('jpg');
+        $container1Image->save(public_path('images/thumbnail/300x200_' . $fileName));
+        $container2Image = SpecialImage::make($file)->resize(150, 100)->encode('jpg');
+        $container2Image->save(public_path('images/thumbnail/150x100_' . $fileName));
+
+        $container3Image = SpecialImage::make($file)->resize(150, 200)->encode('jpg');
+        $container3Image->save(public_path('images/thumbnail/150x200_' . $fileName));
+        $container4Image = SpecialImage::make($file)->resize(75, 100)->encode('jpg');
+        $container4Image->save(public_path('images/thumbnail/75x100_' . $fileName));
+
+
         if ($file->move(public_path('images/thumbnail'), $fileName)) {
+
             return '/images/thumbnail/' . $fileName;
         }
     }
@@ -485,13 +518,24 @@ class HubCategoryContentController extends Controller
 
         // // Access the contents
         // $contents = $hub->categories->flatMap->content;
+        $headerValue = (new Request())->header('user');
         $contents = HubCategoryContent::whereHas('category.hub', function ($query) use ($id) {
             $query->where('id', $id);
         })
-            ->with('views')
+            ->with(['views', "liked"])
             ->withCount('views as total_views')
             ->orderByDesc('total_views')
             ->get();
+        foreach ($contents as $key => $value) {
+            foreach ($value->liked as $key2 => $contentLike) {
+                if ($contentLike->user_cookies_id == $headerValue) {
+                    $value->like = true;
+                    break;
+                } else {
+                    $value->like = false;
+                }
+            }
+        }
 
         if (count($contents) > 0) {
             return response()->json(["status" => "success", 'data' => $contents]);
