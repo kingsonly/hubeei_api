@@ -45,7 +45,7 @@ Route::post('/content/delete/{id}', [HubCategoryContentController::class, 'delet
 Route::get('/content/liked/{id}', [HubCategoryContentController::class, 'getLikedContent'])->name('get-liked-content');
 Route::get('/dashboard/stats/{id}', [SiteController::class, 'dashboardCardsContent'])->name('dashboard-stats');
 Route::post('/dashboard/hubs/settings/update', [HubSettingsController::class, 'updateSettings'])->name('settings-update');
-Route::post('/gethubsettings/{id}', [HubSettingsController::class, 'getHubSettings'])->name('grt-hub-settings');
+Route::get('/gethubsettings/{id}', [HubSettingsController::class, 'getHubSettings'])->name('grt-hub-settings');
 Route::get('/hub/get-users-hubs-by-hub-name/{id}', [HubController::class, 'getUsersHubsByHubName']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/hub/create', [HubController::class, 'create'])->name('hub-create');
