@@ -36,4 +36,10 @@ class HubSettingsController extends Controller
             return '/images/hub/logo/' . $fileName;
         }
     }
+
+    public function getHubSettings($id){
+                $model = HubSettings::where(["hub_id" => $id])->get();
+                return response()->json(["status" => "success", "data" => $model],200);
+
+    }
 }

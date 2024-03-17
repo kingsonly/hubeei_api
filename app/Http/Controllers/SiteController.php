@@ -73,7 +73,7 @@ class SiteController extends Controller
                         "value" => "#ffffff",
                     ],
                     [
-                        "name" => "backgound",
+                        "name" => "background",
                         "value" => "#000000",
                     ],
                     [

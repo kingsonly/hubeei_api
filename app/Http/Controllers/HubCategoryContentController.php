@@ -48,8 +48,8 @@ class HubCategoryContentController extends Controller
             "name" => 'required|string',
             "content_type" => 'required|string',
             "content_description" => 'required|string',
-            "content" => 'required|string',
-            "thumbnail" => 'sometimes|string',
+            "content" => 'required',
+            "thumbnail" => 'sometimes',
             "sportlight" => 'required',
             "with_engagement" => 'required',
             "hub_category_id" => 'required',
@@ -248,14 +248,14 @@ class HubCategoryContentController extends Controller
         $fileName = time() . '.' . $file->getClientOriginalExtension();
         // convert thumbnail for all card size on the hub page 
         $container1Image = SpecialImage::make($file)->resize(300, 200)->encode('jpg');
-        $container1Image->save(public_path('images/thumbnail/300x200_' . $fileName));
+        $container1Image->save('images/thumbnail/300x200_' . $fileName);
         $container2Image = SpecialImage::make($file)->resize(150, 100)->encode('jpg');
-        $container2Image->save(public_path('images/thumbnail/150x100_' . $fileName));
+        $container2Image->save('images/thumbnail/150x100_' . $fileName);
 
         $container3Image = SpecialImage::make($file)->resize(150, 200)->encode('jpg');
-        $container3Image->save(public_path('images/thumbnail/150x200_' . $fileName));
+        $container3Image->save('images/thumbnail/150x200_' . $fileName);
         $container4Image = SpecialImage::make($file)->resize(75, 100)->encode('jpg');
-        $container4Image->save(public_path('images/thumbnail/75x100_' . $fileName));
+        $container4Image->save('images/thumbnail/75x100_' . $fileName);
 
 
         if ($file->move(public_path('images/thumbnail'), $fileName)) {
@@ -518,7 +518,7 @@ class HubCategoryContentController extends Controller
 
         // // Access the contents
         // $contents = $hub->categories->flatMap->content;
-        $headerValue = (new Request())->header('user');
+        $headerValue = request()->header('user');
         $contents = HubCategoryContent::whereHas('category.hub', function ($query) use ($id) {
             $query->where('id', $id);
         })

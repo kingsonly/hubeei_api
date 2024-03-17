@@ -66,34 +66,34 @@ class HubController extends Controller
                 [
                     "name" => "menu",
                     "value" => 1,
-                ]
-                ,
+                ],
                 [
                     "name" => "sportlight",
                     "value" => 0,
-                ]
-                ,
+                ],
                 [
                     "name" => "search",
                     "value" => 1,
-                ]
-                ,
+                ],
                 [
                     "name" => "content",
                     "value" => "#000",
-                ]
-                ,
+                ],
                 [
                     "name" => "category",
                     "value" => "#000",
                 ],
                 [
-                    "name" => "backgound",
+                    "name" => "background",
                     "value" => "#000",
                 ],
                 [
                     "name" => "registration",
                     "value" => 0,
+                ],
+                [
+                    "name" => "topten",
+                    "value" => 1,
                 ],
             ];
 
@@ -138,7 +138,6 @@ class HubController extends Controller
             return true;
         }
         return false;
-
     }
 
     public function delete(Hubs $id)
