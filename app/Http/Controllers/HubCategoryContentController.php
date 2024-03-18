@@ -253,7 +253,7 @@ class HubCategoryContentController extends Controller
         // convert thumbnail for all card size on the hub page 
         $container1Image = SpecialImage::make($file)->resize(300, 200)->encode('jpg');
         $container1Image->save(public_path('images/thumbnail/300x200_' . $fileName));
-        $container2Image = SpecialImage::make($file)->resize(150, 100)->encode('jpg');
+        $container2Image = SpecialImage::make($file)->resize(175, 130)->encode('jpg');
         $container2Image->save(public_path('images/thumbnail/150x100_' . $fileName));
 
         $container3Image = SpecialImage::make($file)->resize(150, 200)->encode('jpg');
