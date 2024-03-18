@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Image as SpecialImage;
+use Illuminate\Support\Facades\Storage;
 
 
 class HubCategoryContentController extends Controller
@@ -243,19 +244,22 @@ class HubCategoryContentController extends Controller
     {
         $file = $request->file('thumbnail');
         if ($file == null) {
-            return '/images/thumbnail/hubieelogo.jpg';
+            return 'public/images/thumbnail/hubieelogo.jpg';
+        }
+        if (!Storage::exists(public_path('images/thumbnail'))) {
+            Storage::makeDirectory(public_path('images/thumbnail'), 0777, true); // You can adjust the permissions as needed
         }
         $fileName = time() . '.' . $file->getClientOriginalExtension();
         // convert thumbnail for all card size on the hub page 
         $container1Image = SpecialImage::make($file)->resize(300, 200)->encode('jpg');
-        $container1Image->save('images/thumbnail/300x200_' . $fileName);
+        $container1Image->save(public_path('images/thumbnail/300x200_' . $fileName));
         $container2Image = SpecialImage::make($file)->resize(150, 100)->encode('jpg');
-        $container2Image->save('images/thumbnail/150x100_' . $fileName);
+        $container2Image->save(public_path('images/thumbnail/150x100_' . $fileName));
 
         $container3Image = SpecialImage::make($file)->resize(150, 200)->encode('jpg');
-        $container3Image->save('images/thumbnail/150x200_' . $fileName);
+        $container3Image->save(public_path('images/thumbnail/150x200_' . $fileName));
         $container4Image = SpecialImage::make($file)->resize(75, 100)->encode('jpg');
-        $container4Image->save('images/thumbnail/75x100_' . $fileName);
+        $container4Image->save(public_path('images/thumbnail/75x100_' . $fileName));
 
 
         if ($file->move(public_path('images/thumbnail'), $fileName)) {
