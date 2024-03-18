@@ -42,9 +42,9 @@ class HubController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "name" => 'required|unique:hub',
+            "name" => 'required',
             'hubDescription' => 'required',
-            'url' => 'required|unique:hub',
+            'url' => 'required|unique:hubs',
         ]);
 
         if ($validator->fails()) {

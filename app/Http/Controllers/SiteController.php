@@ -21,8 +21,8 @@ class SiteController extends Controller
             'lastname' => 'required',
             'password' => 'required',
             'hubDescription' => 'required',
-            'url' => 'required|unique:hub',
-            'name' => 'required|unique:hub',
+            'url' => 'required|unique:hubs',
+            'name' => 'required',
         ]);
 
         if ($validator->fails()) {

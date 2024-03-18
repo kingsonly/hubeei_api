@@ -48,7 +48,7 @@ class HubCategoryContentController extends Controller
             "name" => 'required|string',
             "content_type" => 'required|string',
             "content_description" => 'required|string',
-            "content" => 'required',
+            "content" => 'sometimes',
             "thumbnail" => 'sometimes',
             "sportlight" => 'required',
             "with_engagement" => 'required',
@@ -418,9 +418,10 @@ class HubCategoryContentController extends Controller
         }
     }
 
-    private function createActualEngagement($content, $model, $engagmentData)
+    private function createActualEngagement($content, $models, $engagmentData)
     {
         foreach ($engagmentData as $value) {
+            $model = new Engagment();
             $model->question = $value->question;
             $model->hub_content_id = $content->id;
             $model->engagement_type = $value->engagementType;
