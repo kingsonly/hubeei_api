@@ -44,7 +44,7 @@ jobs:
       - run:
           name: ssh and effect migration  
           command: |
-             ssh -p 7822 -t u509872286@217.21.69.196 "cd public_html/api && php artisan migrate"
+             ssh -p 65002 -t u509872286@217.21.69.196 "cd public_html/api && php artisan migrate"
             
   deploy-laravel-staging:
     docker:
