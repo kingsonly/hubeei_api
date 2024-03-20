@@ -242,7 +242,6 @@ class HubCategoryContentController extends Controller
 
     public function uploadThumbnail($request)
     {
-        //jusst 
         $file = $request->file('thumbnail');
         if ($file == null) {
             return 'public/images/thumbnail/hubieelogo.jpg';
