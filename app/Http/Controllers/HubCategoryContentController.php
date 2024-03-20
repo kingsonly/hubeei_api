@@ -404,6 +404,7 @@ class HubCategoryContentController extends Controller
             "sportlight" => $request->sportlight,
             "size" => $size,
             "status" => 1,
+            "with_engagement" => 0,
         ];
 
         DB::beginTransaction();

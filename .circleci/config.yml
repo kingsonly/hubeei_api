@@ -3,6 +3,49 @@ version: 2.1
 
 jobs:
   
+  deploy-laravel-production:
+    docker:
+        - image: cimg/php:8.3
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+          - "SHA256:nVegYijG0+BBQ5AgPhOXVxdHEUiit7gE8YMUQfTVsfQ"
+      - checkout
+      # install dependencies
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            mv .env.example .env
+
+      - run:
+          name: Install dependencies
+          command:  CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+
+      - run: sudo apt update
+      - run: sudo apt-get install rsync
+
+      # - run:
+      #     name: Update known hosts
+      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
+      - run:
+          name: find and replace in document
+          command: |
+            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=skillz_hubeei:g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=skillz_tibilon:g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Ubuxa##99":g' .env
+
+      
+      - run:
+          name: ssh login  
+          command: |
+             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public u509872286@217.21.69.196:hubeei/api
+      - run:
+          name: ssh and effect migration  
+          command: |
+             ssh -p 7822 -t u509872286@217.21.69.196 "cd hubeei/api && php artisan migrate"
+            
   deploy-laravel-staging:
     docker:
         - image: cimg/php:8.3
@@ -55,3 +98,7 @@ workflows:
           filters:
             branches:
               only: staging
+      - deploy-laravel-production: # Use the pre-configured job, deploy-via-git
+          filters:
+            branches:
+              only: production
