@@ -12,7 +12,7 @@ jobs:
           fingerprints: 
           - "SHA256:nVegYijG0+BBQ5AgPhOXVxdHEUiit7gE8YMUQfTVsfQ"
       - checkout
-      # install dependencies
+      # install dependencies just a try
       - setup_remote_docker:
           version: 20.10.12
           docker_layer_caching: true
