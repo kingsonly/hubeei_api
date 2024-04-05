@@ -40,11 +40,20 @@ jobs:
       - run:
           name: ssh login  
           command: |
-             rsync --delete -va -e 'ssh -p 65002 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public u509872286@217.21.69.196:domains/hubeei.com/public_html/api
+             rsync --delete -va -e 'ssh  -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public hubeei@94.72.98.194:public_html/api
       - run:
           name: ssh and effect migration  
           command: |
-             ssh -p 65002 -t u509872286@217.21.69.196 "cd domains/hubeei.com/public_html/api && php artisan migrate"
+             ssh  -t hubeei@94.72.98.194 "cd public_html/api && php artisan migrate"
+            
+      # - run:
+      #     name: ssh login  
+      #     command: |
+      #        rsync --delete -va -e 'ssh -p 65002 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public u509872286@217.21.69.196:domains/hubeei.com/public_html/api
+      # - run:
+      #     name: ssh and effect migration  
+      #     command: |
+      #        ssh -p 65002 -t u509872286@217.21.69.196 "cd domains/hubeei.com/public_html/api && php artisan migrate"
             
   deploy-laravel-staging:
     docker:

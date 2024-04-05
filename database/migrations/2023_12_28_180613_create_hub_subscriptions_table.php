@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
-            $table->integer('hub_id');
             $table->date('expiration_date')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            // $table->string('additional_column');
             $table->rememberToken();
             $table->timestamps();
-
         });
     }
 
