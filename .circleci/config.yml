@@ -44,7 +44,7 @@ jobs:
       - run:
           name: ssh and effect migration  
           command: |
-             ssh  -t hubeei@94.72.98.194 "cd public_html/api && php artisan migrate"
+             ssh  -t -oStrictHostKeyChecking=no hubeei@94.72.98.194 "cd public_html/api && php artisan migrate"
             
       # - run:
       #     name: ssh login  
