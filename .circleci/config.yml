@@ -37,14 +37,14 @@ jobs:
             sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=u509872286_hubeei:g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=u509872286_hubeei:g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="Hubeei##99":g' .env
 
       
-      - run:
-          name: ssh login  
-          command: |
-             rsync --delete -va -e 'ssh  -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public hubeei@94.72.98.194:public_html/api
       # - run:
-      #     name: ssh and effect migration  
+      #     name: ssh login  
       #     command: |
-      #        ssh  -t hubeei@94.72.98.194 "cd public_html/api && php artisan migrate"
+      #        rsync --delete -va -e 'ssh  -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public hubeei@94.72.98.194:public_html/api
+      - run:
+          name: ssh and effect migration  
+          command: |
+             ssh  -t hubeei@94.72.98.194 "cd public_html/api && php artisan migrate"
             
       # - run:
       #     name: ssh login  
