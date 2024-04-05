@@ -12,7 +12,7 @@ jobs:
           fingerprints: 
           - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
       - checkout
-      # install dependencies .
+      # install dependencies 
       - setup_remote_docker:
           version: 20.10.12
           docker_layer_caching: true
@@ -28,9 +28,6 @@ jobs:
       - run: sudo apt update
       - run: sudo apt-get install rsync
 
-      # - run:
-      #     name: Update known hosts
-      #     command:  CI=false ssh-keyscan -H 185.160.67.60 >> ~/.ssh/known_hosts && cat ~/.ssh/known_hosts
       - run:
           name: find and replace in document
           command: |
