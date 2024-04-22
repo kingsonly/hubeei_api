@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
+Route::get('/get-hub-subscribers/{id}', [HubSubscriptionController::class, 'getHubSubscribers'])->name('get-hub-subscribers');
+Route::get('/registion-status/{id}', [SiteController::class, 'getRegistrationSettingsStatus'])->name('registion-status');
 Route::post('/register-settings-update', [SiteController::class, 'updateHubRegistrationSettings'])->name('updateHubRegistrationSettings');
 Route::get('/register-settings-view/{id}', [SiteController::class, 'getHubRegistrationSettings'])->name('getHubRegistrationSettings');
 Route::post('/register-settings-create', [SiteController::class, 'hubRegistrationSettings'])->name('hubRegistrationSettings');
@@ -32,6 +34,7 @@ Route::post('/subscription/login', [HubSubscriptionController::class, 'login'])-
 Route::get('/usershub/{id}', [HubController::class, 'getUsersHubs'])->name('users-hub');
 Route::get('/category-content/{id}', [HubCategoryController::class, 'getCategoryWithContent'])->name('category-content');
 Route::post('/create-category', [HubCategoryController::class, 'create'])->name('create-category');
+Route::post('/update-category/{id}', [HubCategoryController::class, 'update'])->name('update-category');
 Route::post('/content/create', [HubCategoryContentController::class, 'create'])->name('create-content');
 Route::get('/content/view/{id}', [HubCategoryContentController::class, 'view'])->name('view-content');
 Route::post('/content/change-content-position', [HubCategoryContentController::class, 'changeContentPosition'])->name('change-content-position');

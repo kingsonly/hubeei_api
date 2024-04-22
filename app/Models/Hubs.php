@@ -20,4 +20,8 @@ class Hubs extends Model
     {
         return $this->hasMany(HubSettings::class, "hub_id", "id");
     }
+    public function createHubRegistrationSettings()
+    {
+        return $this->hasOne(CreateHubRegistrationSettings::class, "hub_id", "id");
+    }
 }

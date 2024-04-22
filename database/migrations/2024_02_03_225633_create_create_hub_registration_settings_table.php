@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('create_hub_registration_settings', function (Blueprint $table) {
             $table->id();
             $table->integer("hub_id")->comment("the hub id");
-            $table->string("structure")->comment("the input structure");
+            $table->string("with_payment")->comment("if the person registring should pay or not");
+            $table->string("tenure")->comment("one off / monthly / yearly");
+            $table->string("primary_amount")->comment("200");
             $table->timestamps();
         });
     }

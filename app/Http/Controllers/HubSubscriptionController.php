@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HubSubscription;
+use App\Models\SubsribersHub;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,6 @@ class HubSubscriptionController extends Controller
         } else {
             return response()->json(["status" => "error", "message" => "Wrong Email or Password"], 400);
         }
-
     }
 
     public function registration(Request $request)
@@ -54,11 +54,15 @@ class HubSubscriptionController extends Controller
 
         if ($model->save()) {
             return response()->json(["status" => "success", "data" => $model], 200);
-
         } else {
             return response()->json(["status" => "error", "data" => $model], 400);
-
         }
+    }
 
+    public function getHubSubscribers($id)
+    {
+        //$model =  SubsribersHub::with()->where([])->get();
+        $model =  SubsribersHub::with(["subscriber", "subscriberData"])->where(["hub_id" => $id])->get();
+        return response()->json(["status" => "success", "data" => $model], 200);
     }
 }

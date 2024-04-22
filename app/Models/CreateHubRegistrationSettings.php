@@ -10,6 +10,14 @@ class CreateHubRegistrationSettings extends Model
     use HasFactory;
     protected $fillable = [
         'hub_id',
-        'structure',
+        "hub_id",
+        "with_payment",
+        "tenure",
+        "primary_amount",
     ];
+
+    public function hubRegistrationSettingFields()
+    {
+        return $this->hasMany(HubSubsribtionRequiredFields::class, "hub_registration_settings_id", "id");
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CreateHubRegistrationSettings;
 use App\Models\Hubs;
 use App\Models\HubSettings;
+use App\Models\HubSubsribtionRequiredFields;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,38 +52,47 @@ class SiteController extends Controller
                     [
                         "name" => "logo",
                         "value" => "",
+                        "status" => 1
                     ],
                     [
                         "name" => "menu",
                         "value" => 1,
+                        "status" => 1
                     ],
                     [
                         "name" => "sportlight",
                         "value" => 0,
+                        "status" => 1
                     ],
                     [
                         "name" => "search",
                         "value" => 1,
+                        "status" => 1
                     ],
                     [
                         "name" => "content",
                         "value" => "#ffffff",
+                        "status" => 1
                     ],
                     [
                         "name" => "category",
                         "value" => "#ffffff",
+                        "status" => 1
                     ],
                     [
                         "name" => "background",
                         "value" => "#000000",
+                        "status" => 1
                     ],
                     [
                         "name" => "registration",
                         "value" => 0,
+                        "status" => 0
                     ],
                     [
                         "name" => "topten",
                         "value" => 1,
+                        "status" => 1,
                     ],
                 ];
 
@@ -202,6 +212,7 @@ class SiteController extends Controller
         $model = new HubSettings();
         $model->value = $data["value"];
         $model->name = $data["name"];
+        $model->status = $data["status"];
         $model->hub_id = $hubId;
         $model->status = 1;
         if ($model->save()) {
@@ -209,27 +220,56 @@ class SiteController extends Controller
         }
         return false;
     }
+
+
     public function hubRegistrationSettings(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'hub_id' => 'required',
             'structure' => 'required',
+            "with_payment" => "required",
+            "tenure" => "required",
+            "primary_amount" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json(['status' => "error", "message" => "Validation failed", "data" => $validator->errors()], 400);
         }
         if (!CreateHubRegistrationSettings::where(["hub_id" => $request->hub_id])->first()) {
             $model = new CreateHubRegistrationSettings();
-            $model->create($request->all());
-            return response()->json(['status' => "success"], 200);
-        } else {
-            return response()->json(['status' => "error", "message" => "this hub already have a settings"], 400);
+            $createNewSetting = $model->create($request->all());
+            $structure = json_decode($request->structure);
+            //return response()->json(['status' => "success", "data" => $structure], 200);
+            foreach ($structure as $requiredField) {
+                $requiredFieldModel = new HubSubsribtionRequiredFields();
+                $requiredFieldModel->hub_registration_settings_id = $createNewSetting->id;
+                $requiredFieldModel->name = $requiredField->name;
+                $requiredFieldModel->type = $requiredField->type;
+                $requiredFieldModel->save();
+            }
+            // turn registration on in hub_settings
+            $getHubSettingsRegistration = HubSettings::where(["hub_id" => $request->hub_id, "name" => "registration"])->first();
+            $getHubSettingsRegistration->value = 1;
+            $getHubSettingsRegistration->status = 1;
+            $getHubSettingsRegistration->save();
+
+
+            return response()->json(['status' => "success", "data" => $getHubSettingsRegistration], 200);
         }
+        $getHubSettingsRegistration = HubSettings::where(["hub_id" => $request->hub_id, "name" => "registration"])->first();
+        $getHubSettingsRegistration->value = $getHubSettingsRegistration->value == 1 ? 0 : 1;
+        $getHubSettingsRegistration->save();
+        return response()->json(['status' => "success", "data" => $getHubSettingsRegistration], 200);
+    }
+
+    public function getRegistrationSettingsStatus($id)
+    {
+        $response = HubSettings::where(["hub_id" => $id, "name" => "registration"])->first();
+        return response()->json(['status' => "success", "data" => $response], 200);
     }
 
     public function getHubRegistrationSettings($id)
     {
-        $model = CreateHubRegistrationSettings::findOrFail($id);
+        $model = Hubs::with(["createHubRegistrationSettings.hubRegistrationSettingFields"])->findOrFail($id);
         return response()->json(['status' => "success", "data" => $model], 200);
     }
 
