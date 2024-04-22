@@ -31,7 +31,7 @@ jobs:
       - run:
           name: find and replace in document
           command: |
-            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE="$DB_DATABASE":g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME="$DB_USERNAME":g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="$DB_PASSWORD":g' .env
+            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e 's:DB_DATABASE=forge:DB_DATABASE=${DB_DATABASE}:g' .env && sed -i -e 's:DB_USERNAME=forge:DB_USERNAME=${DB_USERNAME}:g' .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e 's:DB_PASSWORD=forge:DB_PASSWORD="${DB_PASSWORD}":g' .env
 
       
       - run:
