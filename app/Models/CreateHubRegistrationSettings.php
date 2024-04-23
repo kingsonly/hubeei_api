@@ -16,6 +16,7 @@ class CreateHubRegistrationSettings extends Model
         "primary_amount",
     ];
 
+
     public function hubRegistrationSettingFields()
     {
         return $this->hasMany(HubSubsribtionRequiredFields::class, "hub_registration_settings_id", "id");

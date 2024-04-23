@@ -5,7 +5,7 @@ jobs:
   
   deploy-laravel-production:
     docker:
-        - image: cimg/php:8.3
+        - image: cimg/php:8.1
     working_directory: ~/repo
     steps:
       - add_ssh_keys:

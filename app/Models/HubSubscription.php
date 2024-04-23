@@ -11,4 +11,8 @@ class HubSubscription extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function subscribedHub()
+    {
+        return $this->hasMany(SubsribersHub::class, "subscribers_id", "id");
+    }
 }
