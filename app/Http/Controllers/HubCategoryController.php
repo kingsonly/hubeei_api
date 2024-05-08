@@ -107,7 +107,7 @@ class HubCategoryController extends Controller
             $headerValue = $request->header('user');
 
             // get hub with content and category
-            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked"])->orderBy('position', 'desc')->get();
+            $models = HubCategory::where(["hub_id" => $id])->with(["content.liked", "content.views"])->orderBy('position', 'desc')->get();
 
             if ($models) {
                 foreach ($models as $model) {

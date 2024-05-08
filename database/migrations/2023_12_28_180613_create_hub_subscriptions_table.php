@@ -14,14 +14,13 @@ return new class extends Migration
         Schema::create('hub_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email');
-            $table->integer('hub_id');
+            $table->string('email')->unique();
             $table->date('expiration_date')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            // $table->string('additional_column');
             $table->rememberToken();
             $table->timestamps();
-
         });
     }
 

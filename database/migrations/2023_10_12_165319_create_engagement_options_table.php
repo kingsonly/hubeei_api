@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer("engagment_id");
             $table->string("answer");
-            $table->integer("answer_rank")->comment("to asertain if an option is a possitive or a negetive option");
+            $table->boolean("answer_rank")->comment("to asertain if an option is a possitive or a negetive option")->default(false);
             $table->integer("status");
             $table->timestamps();
         });

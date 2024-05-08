@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreateHubRegistrationSettings;
 use App\Models\Hubs;
 use App\Models\HubSettings;
+use App\Models\HubSubsribtionRequiredFields;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +22,8 @@ class SiteController extends Controller
             'lastname' => 'required',
             'password' => 'required',
             'hubDescription' => 'required',
-            'url' => 'required|unique:hub',
-            'name' => 'required|unique:hub',
+            'url' => 'required|unique:hubs',
+            'name' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -50,42 +52,47 @@ class SiteController extends Controller
                     [
                         "name" => "logo",
                         "value" => "",
+                        "status" => 1
                     ],
                     [
                         "name" => "menu",
                         "value" => 1,
-                    ]
-                    ,
+                        "status" => 1
+                    ],
                     [
                         "name" => "sportlight",
                         "value" => 0,
-                    ]
-                    ,
+                        "status" => 1
+                    ],
                     [
                         "name" => "search",
                         "value" => 1,
-                    ]
-                    ,
+                        "status" => 1
+                    ],
                     [
                         "name" => "content",
                         "value" => "#ffffff",
-                    ]
-                    ,
+                        "status" => 1
+                    ],
                     [
                         "name" => "category",
                         "value" => "#ffffff",
+                        "status" => 1
                     ],
                     [
-                        "name" => "backgound",
+                        "name" => "background",
                         "value" => "#000000",
+                        "status" => 1
                     ],
                     [
                         "name" => "registration",
                         "value" => 0,
+                        "status" => 0
                     ],
                     [
                         "name" => "topten",
                         "value" => 1,
+                        "status" => 1,
                     ],
                 ];
 
@@ -134,6 +141,35 @@ class SiteController extends Controller
     {
     }
 
+    /**
+     * formatSizeUnits function
+     *
+     * this function is use to display a human readable size
+     * 
+     * @param [type] $bytes
+     * @return void
+     */
+    private function  formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1099511627776) {
+            $size = number_format($bytes / 1099511627776, 2) . ' TB';
+        } elseif ($bytes >= 1073741824) {
+            $size = number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $size = number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $size = number_format($bytes / 1024, 2) . ' KB';
+        } elseif ($bytes > 1) {
+            $size = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $size = $bytes . ' byte';
+        } else {
+            $size = '0 bytes';
+        }
+
+        return $size;
+    }
+
     public function dashboardCardsContent($id)
     {
         $model = Hubs::with(['categories' => function ($query) {
@@ -158,7 +194,7 @@ class SiteController extends Controller
 
             [
                 "title" => "Total Size",
-                "count" => $totalSumOfSize,
+                "count" => $this->formatSizeUnits($totalSumOfSize),
             ],
 
             [
@@ -176,13 +212,77 @@ class SiteController extends Controller
         $model = new HubSettings();
         $model->value = $data["value"];
         $model->name = $data["name"];
+        $model->status = $data["status"];
         $model->hub_id = $hubId;
         $model->status = 1;
         if ($model->save()) {
             return true;
         }
         return false;
-
     }
 
+
+    public function hubRegistrationSettings(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'hub_id' => 'required',
+            'structure' => 'required',
+            "with_payment" => "required",
+            "tenure" => "required",
+            "primary_amount" => "required",
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => "error", "message" => "Validation failed", "data" => $validator->errors()], 400);
+        }
+        if (!CreateHubRegistrationSettings::where(["hub_id" => $request->hub_id])->first()) {
+            $model = new CreateHubRegistrationSettings();
+            $createNewSetting = $model->create($request->all());
+            $structure = json_decode($request->structure);
+            //return response()->json(['status' => "success", "data" => $structure], 200);
+            foreach ($structure as $requiredField) {
+                $requiredFieldModel = new HubSubsribtionRequiredFields();
+                $requiredFieldModel->hub_registration_settings_id = $createNewSetting->id;
+                $requiredFieldModel->name = $requiredField->name;
+                $requiredFieldModel->type = $requiredField->type;
+                $requiredFieldModel->save();
+            }
+            // turn registration on in hub_settings
+            $getHubSettingsRegistration = HubSettings::where(["hub_id" => $request->hub_id, "name" => "registration"])->first();
+            $getHubSettingsRegistration->value = 1;
+            $getHubSettingsRegistration->status = 1;
+            $getHubSettingsRegistration->save();
+
+
+            return response()->json(['status' => "success", "data" => $getHubSettingsRegistration], 200);
+        }
+        $getHubSettingsRegistration = HubSettings::where(["hub_id" => $request->hub_id, "name" => "registration"])->first();
+        $getHubSettingsRegistration->value = $getHubSettingsRegistration->value == 1 ? 0 : 1;
+        $getHubSettingsRegistration->save();
+        return response()->json(['status' => "success", "data" => $getHubSettingsRegistration], 200);
+    }
+
+    public function getRegistrationSettingsStatus($id)
+    {
+        $response = HubSettings::where(["hub_id" => $id, "name" => "registration"])->first();
+        return response()->json(['status' => "success", "data" => $response], 200);
+    }
+
+    public function getHubRegistrationSettings($id)
+    {
+        $model = Hubs::with(["createHubRegistrationSettings.hubRegistrationSettingFields"])->findOrFail($id);
+        return response()->json(['status' => "success", "data" => $model], 200);
+    }
+
+    public function updateHubRegistrationSettings($id, Request $request)
+    {
+        $model = CreateHubRegistrationSettings::findOrFail($id);
+        if ($model) {
+            if ($model->update($request->all())) {
+                return response()->json(['status' => "success", "message" => "created successfuly"], 200);
+            }
+
+            return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
+        }
+        return response()->json(['status' => "error", "message" => "Something went wrong"], 400);
+    }
 }

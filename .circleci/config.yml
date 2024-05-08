@@ -3,9 +3,58 @@ version: 2.1
 
 jobs:
   
-  deploy-laravel-staging:
+  deploy-laravel-production:
     docker:
         - image: cimg/php:8.1
+    working_directory: ~/repo
+    steps:
+      - add_ssh_keys:
+          fingerprints: 
+          - "SHA256:nVegYijG0+BBQ5AgPhOXVxdHEUiit7gE8YMUQfTVsfQ"
+      - checkout
+      # install dependencies 
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
+      - run:
+          name: rename .env.example file to .env 
+          command: |
+            mv .env.example .env
+
+      - run:
+          name: Install dependencies
+          command:  CI=false composer clear-cache && CI=false  composer install &&  CI=false php artisan key:generate
+
+      - run: sudo apt update
+      - run: sudo apt-get install rsync
+
+      - run:
+          name: find and replace in document
+          command: |
+            sed -i -e 's:/public/index.php:/index.php:g' public/index.php && sed -i -e 's:/../vendor/autoload.php:/vendor/autoload.php:g' public/index.php && sed -i -e "s:DB_DATABASE=forge:DB_DATABASE=${DB_DATABASE}:g" .env && sed -i -e "s:DB_USERNAME=forge:DB_USERNAME=${DB_USERNAME}:g" .env  && sed -i -e 's:/../bootstrap/app.php:/bootstrap/app.php:g' public/index.php && sed -i -e "s:DB_PASSWORD=forge:DB_PASSWORD=${DB_PASSWORD}:g" .env
+
+      
+      - run:
+          name: ssh login  
+          command: |
+             rsync --delete -va -e 'ssh  -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public hubeei@94.72.98.194:public_html/api
+      - run:
+          name: ssh and effect migration  
+          command: |
+             ssh  -t -oStrictHostKeyChecking=no hubeei@94.72.98.194 "cd public_html/api && php artisan migrate:fresh"
+            
+      # - run:
+      #     name: ssh login  
+      #     command: |
+      #        rsync --delete -va -e 'ssh -p 65002 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public u509872286@217.21.69.196:domains/hubeei.com/public_html/api
+      # - run:
+      #     name: ssh and effect migration  
+      #     command: |
+      #        ssh -p 65002 -t u509872286@217.21.69.196 "cd domains/hubeei.com/public_html/api && php artisan migrate"
+            
+  deploy-laravel-staging:
+    docker:
+        - image: cimg/php:8.3
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
@@ -40,7 +89,7 @@ jobs:
       - run:
           name: ssh login  
           command: |
-             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ skillz@185.160.67.60:hubeei/api
+             rsync --delete -va -e 'ssh -p 7822 -o StrictHostKeyChecking=no'   app database phpunit.xml storage vendor artisan .env tests bootstrap composer.json resources composer.lock routes config package.json public/ public skillz@185.160.67.60:hubeei/api
       - run:
           name: ssh and effect migration  
           command: |
@@ -55,3 +104,7 @@ workflows:
           filters:
             branches:
               only: staging
+      - deploy-laravel-production: # Use the pre-configured job, deploy-via-git
+          filters:
+            branches:
+              only: production
