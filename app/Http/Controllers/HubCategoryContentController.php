@@ -54,6 +54,7 @@ class HubCategoryContentController extends Controller
             "sportlight" => 'required',
             "with_engagement" => 'required',
             "hub_category_id" => 'required',
+            "hub_id" => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -126,7 +127,7 @@ class HubCategoryContentController extends Controller
     public function uploadOtherFiles(Request $request)
     {
         $engagmentModel = new Engagment();
-
+        $hubId = $request->hub_id;
         if ($request->content_type == "video" or $request->content_type == "audio" or $request->content_type == "pdf") {
             $file = $request->file('content');
             $thumbNail = $request->file('thumbnail');
@@ -159,7 +160,7 @@ class HubCategoryContentController extends Controller
                     if ($request->with_engagement == 1) {
                         $engagmentData = json_decode($request->input("engagment_data"));
 
-                        $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
+                        $this->createActualEngagement($createContent, $engagmentModel, $engagmentData, $hubId);
                     }
 
                     return response()->json(["status" => "success", "data" => $createContent], 200);
@@ -221,7 +222,7 @@ class HubCategoryContentController extends Controller
                 if ($request->with_engagement == 1) {
                     $engagmentData = json_decode($request->input("engagment_data"));
 
-                    $this->createActualEngagement($createContent, $engagmentModel, $engagmentData);
+                    $this->createActualEngagement($createContent, $engagmentModel, $engagmentData, $hubId);
                 }
 
                 return response()->json(["status" => "success", "data" => $createContent], 200);
@@ -395,6 +396,7 @@ class HubCategoryContentController extends Controller
         $size = $thumbNailFileSizeInBytes + $sizeInBytes;
 
         $data = [
+            "hub_id" => $request->hub_id,
             "name" => $request->name,
             "content_type" => $request->content_type,
             "content_description" => $request->content_description,
@@ -410,7 +412,8 @@ class HubCategoryContentController extends Controller
         DB::beginTransaction();
         try {
             if ($content = $this->createNewContent($data)) {
-                $this->createActualEngagement($content, $model, $engagmentData);
+                $hubId = $request->hub_id;
+                $this->createActualEngagement($content, $model, $engagmentData, $hubId);
                 DB::commit();
 
                 return response()->json(["status" => "success"], 200);
@@ -423,7 +426,7 @@ class HubCategoryContentController extends Controller
         }
     }
 
-    private function createActualEngagement($content, $models, $engagmentData)
+    private function createActualEngagement($content, $models, $engagmentData, $hubId)
     {
         foreach ($engagmentData as $value) {
             $model = new Engagment();
@@ -431,6 +434,7 @@ class HubCategoryContentController extends Controller
             $model->hub_content_id = $content->id;
             $model->engagement_type = $value->engagementType;
             $model->answer_type = $value->optionType;
+            $model->hub_id = $hubId;
             $model->status = 1;
             if ($model->save()) {
                 // save answers too

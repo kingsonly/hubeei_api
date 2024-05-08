@@ -10,7 +10,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints: 
-          - "SHA256:XM+2xRjrCCSH/Frn3FMhEbTaB4RS9hNa9Wm54+iINww"
+          - "SHA256:nVegYijG0+BBQ5AgPhOXVxdHEUiit7gE8YMUQfTVsfQ"
       - checkout
       # install dependencies 
       - setup_remote_docker:
